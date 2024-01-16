@@ -20,6 +20,8 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 def reg_user():
     '''Add a new user to the user.txt file'''
     # - Request input of a new username
+    # - TO DO - print message specifying 15 characters max
+    # - TO DO - add elif below to check new_username <= 15 characters
     new_username = input("New Username: ")
     while True:
         if new_username in username_password.keys():
@@ -27,6 +29,7 @@ def reg_user():
         else:
             break
 
+    # TO DO - Put below in a while loop in case of user errors
     # - Request input of a new password
     new_password = input("New Password: ")
 
@@ -47,7 +50,7 @@ def reg_user():
 
     # - Otherwise you present a relevant message.
     else:
-        print("Passwords do no match")
+        print("Passwords do not match.")
 
 
 def add_task():
@@ -358,6 +361,37 @@ def generate_reports():
     print("\nUser and task overview reports have been generated.")
 
 
+def display_stats():
+    '''If the user is an admin they can display statistics about number of users
+    and tasks.'''
+
+    # Generate tasks.txt and user.txt if they don't already exist
+    # because user has not selected to generate them yet
+
+    if not os.path.exists("user.txt"):
+        with open("user.txt", "w", encoding="utf-8") as user_input:
+            default_file.write("admin;password")
+
+    if not os.path.exists("tasks.txt"):
+        with open("tasks.txt", "w", encoding="utf-8") as task_input:
+            pass
+
+    # Generate the info below from tasks.txt and user.txt
+    # call the code to generate the txt files
+
+    with open("user.txt", "r", encoding="utf-8") as user_input:
+        user_count = len(user_input.readlines())
+
+    with open("tasks.txt", "r", encoding="utf-8") as task_input:
+        task_count = len(task_input.readlines())
+
+    print("\nUsage statistics:")
+    print("\n-----------------------------------")
+    print(f"Number of users: \t\t {user_count}")
+    print(f"Number of tasks: \t\t {task_count}")
+    print("-----------------------------------\n")
+
+
 def update_output():
     """Updates the tasks.txt output file with strings generated from
     tasks in task_list"""
@@ -380,30 +414,24 @@ def clear_screen():
     """Clears the screen to refresh display"""
     os.system("cls")
 
-    # check that saving the task_list dictionary to selected_task allows changes.
-    # IMPORTANT TO ACCESS & EDIT MAIN TEXT FILE ITSELF HERE
-
-# PC - FILE CREATION
+# Default file creation:
 
 # Create tasks.txt if it doesn't exist
 if not os.path.exists("tasks.txt"):
     with open("tasks.txt", "w", encoding="utf-8") as default_file:
         pass
 
-# PC - reads each string in the task txt file?
-# PC - creates a list called task_data which is populated by the tasks?
+# Create a list of task strings read from the tasks.txt input file
 with open("tasks.txt", 'r', encoding="utf-8") as task_file:
     task_data = task_file.read().split("\n")
     task_data = [t for t in task_data if t != ""]
 
-# PC - creates an empty list called task_list
-# PC - for each string in task_data, create a current task dictionary?
+# Creates an empty list called task_list, and for each line in input
+# file, split data into components and store in a dictionary before
+# appending to task_list.
 task_list = []
 for t_str in task_data:
     curr_t = {}
-    # create current task dictionary and adds values from task_components
-    # task_components is a list created by splitting the input strings
-    # Split by semicolon and manually add each component
     task_components = t_str.split(";")
     curr_t['username'] = task_components[0]
     curr_t['title'] = task_components[1]
@@ -416,16 +444,15 @@ for t_str in task_data:
 
 
 #====Login Section====
-"""This code reads usernames and password from the user.txt file to
- allow a user to login."""
+# Read usernames and passwords from user.txt and store values in
+# username_password dictionary.
 
-# If no user.txt file, write one with a default account
+# If no user.txt file exists, write one with a default account
 if not os.path.exists("user.txt"):
     with open("user.txt", "w", encoding="utf-8") as default_file:
         default_file.write("admin;password")
 
-# Read user.txt and create a list containing a string
-# for each line of input
+# Read user.txt and create a list of input line strings
 with open("user.txt", 'r', encoding="utf-8") as user_file:
     user_data = user_file.read().split("\n")
 
@@ -436,27 +463,29 @@ for user in user_data:
     username, password = user.split(';')
     username_password[username] = password
 
+print("\n\033[1mWelcome to this task management program.\033[0m\n")
+print("If you do not have an account, please ask your Admin user to register you.\n")
+
 logged_in = False
 while not logged_in:
 
-    print("LOGIN")
+    print("Please enter your login details below.\n")
     curr_user = input("Username: ")
     curr_pass = input("Password: ")
     if curr_user not in username_password.keys():
         print("User does not exist")
         continue
-    elif username_password[curr_user] != curr_pass:
+    if username_password[curr_user] != curr_pass:
         print("Wrong password")
         continue
-    else:
-        clear_screen()
-        print("Login successful!")
-        logged_in = True
+    clear_screen()
+    print("Login successful!")
+    logged_in = True
 
 #  MAIN PROGRAM ROUTINE
+        
 while True:
-    # presenting the menu to the user and
-    # making sure that the user input is converted to lower case.
+    # presents the menu to the user and converts input to lower case.
     print()
     menu = input('''Select one of the following options below:\n
 r -  Register a user
@@ -484,22 +513,7 @@ e -  Exit
         generate_reports()
 
     elif menu == 'ds' and curr_user == 'admin':
-
-        # Put the below in a function
-        # Generate the info below from tasks.txt and user.txt
-        # Generate these files if they don't already exist
-        # (PC - aren't they generated at the start?)
-        # because user has not selected to generate them yet
-        # call the code to generate the txt files
-        '''If the user is an admin they can display statistics about number of users
-        and tasks.'''
-        num_users = len(username_password.keys())
-        num_tasks = len(task_list)
-
-        print("-----------------------------------")
-        print(f"Number of users: \t\t {num_users}")
-        print(f"Number of tasks: \t\t {num_tasks}")
-        print("-----------------------------------")
+        display_stats()
 
     elif menu == 'e':
         print('Goodbye!!!')
