@@ -20,9 +20,9 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 def reg_user():
     '''Add a new user to the user.txt file'''
-    # - Request input of a new username
-    # - TO DO - print message specifying 15 characters max
-    # - TO DO - add elif below to check new_username <= 15 characters
+
+    # Loop until user enters a username that is not already in the
+    # list of registered users.
     new_username = input("New Username: ")
     while True:
         if new_username in username_password.keys():
@@ -30,37 +30,35 @@ def reg_user():
         else:
             break
 
-    # TO DO - Put below in a while loop in case of user errors
-    # - Request input of a new password
-    new_password = input("New Password: ")
+    # Loop until new_password and confirm_password match.
+    # When they match, add new_username and new_password to
+    # username_password dictionary and write dictionary to
+    # users.txt output file.
+    while True:
+        new_password = input("New Password: ")
+        confirm_password = input("Confirm Password: ")
 
-    # - Request input of password confirmation.
-    confirm_password = input("Confirm Password: ")
+        if new_password == confirm_password:
+            print(f"\nNew user added: {new_username}\n")
+            username_password[new_username] = new_password
 
-    # - Check if the new password and confirmed password are the same.
-    if new_password == confirm_password:
-        # - If they are the same, add them to the user.txt file,
-        print("New user added")
-        username_password[new_username] = new_password
-
-        with open("user.txt", "w", encoding="utf-8") as out_file:
-            user_data = []
-            for k in username_password:
-                user_data.append(f"{k};{username_password[k]}")
-            out_file.write("\n".join(user_data))
-
-    # - Otherwise you present a relevant message.
-    else:
+            with open("user.txt", "w", encoding="utf-8") as out_file:
+                user_data = []
+                for k in username_password:
+                    user_data.append(f"{k};{username_password[k]}")
+                out_file.write("\n".join(user_data))
+            break
         print("Passwords do not match.")
 
 
 def add_task():
-    '''Allow a user to add a new task to task.txt file
-    Prompt a user for the following: 
-        - A username of the person whom the task is assigned to,
-        - A title of a task,
-        - A description of the task and 
+    '''Allow user to add a new task to task.txt file
+    Prompt user for the following: 
+        - the username of the person whom the task is assigned to,
+        - the title of a task,
+        - the description of the task and 
         - the due date of the task.'''
+
     task_username = input("Name of person assigned to task: ")
     if task_username not in username_password.keys():
         print("User does not exist. Please enter a valid username")
@@ -70,20 +68,25 @@ def add_task():
     # Check that the task title is below character limit and reprompt if not.
     # add code to check the title is not already in the list (i.e. is unique)
     # if it is, prompt user to choose a different title
+    # Get the current date
     task_description = input("Description of Task: ")
+
+    # Loop until user provides a due date that is in the correct format
+    # and is >= today.
+    curr_date = date.today()
+
     while True:
         try:
             task_due_date = input("Due date of task (YYYY-MM-DD): ")
             due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
-            # OPTIONAL TO DO - check if due_date_time(as date only) >= date.today()
-            # If so, break
-            # else, continue
-            break
         except ValueError:
-            print("Invalid datetime format. Please use the format specified")
+            print("Invalid datetime format. Please use the format specified.")
+            continue
+        if due_date_time.date() < curr_date:
+            print("Please set a due date of today or later.")
+        else:
+            break
 
-    # Then get the current date.
-    curr_date = date.today()
     # Add the data to the file task.txt and
     # Include 'No' to indicate if the task is complete.
     new_task = {
@@ -109,7 +112,8 @@ def add_task():
             ]
             task_list_to_write.append(";".join(str_attrs))
         task_file.write("\n".join(task_list_to_write))
-    print("Task successfully added.")
+    clear_screen()
+    print("\nTask successfully added.")
 
 
 def view_all():
@@ -117,9 +121,9 @@ def view_all():
     format of Output 2 presented in the task pdf (i.e. includes spacing
     and labelling) 
     '''
-    print("\n\033[1mAll tasks:\033[0m\n")
 
     # Display details for each task in task_list.
+    print("\n\033[1mAll tasks:\033[0m\n")
     for t in task_list:
         disp_str = "________________________________________________________________________\n\n"
         disp_str += f"Task: \t\t {t['title']}\n"
@@ -164,7 +168,7 @@ def view_mine():
                            t['title'],
                            "yes" if t['completed'] is True else "no", 
                            t['due_date'].strftime(DATETIME_STRING_FORMAT)])
-    print(tabulate(table_data, 
+    print(tabulate(table_data,
                    headers=["No.", "Task", "Completed?", "Due date"]))
 
     # Exit function if user_select = "-1". Check validity of user input.
@@ -180,7 +184,7 @@ def view_mine():
             clear_screen()
             break
 
-    # Loop that displays selected task with details and allows editing
+    # Loop that displays selected task with details and allows editing.
     while True:
         print("\n\033[1mTask details:\033[0m\n")
 
@@ -197,7 +201,7 @@ def view_mine():
         disp_str += f"Task Description: \n {selected_task['description']}\n"
         print(disp_str)
 
-        # Display view / edit options to the user.
+        # Display editing options to the user.
         print("\nOptions:\n"
             "c - mark this task as completed\n"
             "u - change the assigned user\n"
@@ -207,7 +211,7 @@ def view_mine():
         vm_choice = input("Please enter a letter: ")
 
         if vm_choice.lower() == "c":
-            # If user confirms, mark selected task as complete.
+            # If user confirms choice, mark selected task as complete.
             # Return to summary display.
             print("\nPlease note: once marked as completed, the selected task "
                   "can no longer be edited.")
@@ -265,22 +269,29 @@ def view_mine():
                 print("\nThis task is already marked as completed and can "
                       "no longer be edited.")
                 continue
-            # Collect new data input, update task_list and output file
-            # Display confirmation of change to date.
+
+            # Loop until user has entered a new due date that is in
+            # the correct format and >= today. 
             while True:
                 try:
                     changed_due_date = input("Please enter a new due date "
                                              "for this task (YYYY-MM-DD): ")
                     selected_task['due_date'] = datetime.strptime(
                         changed_due_date, DATETIME_STRING_FORMAT)
-                    break
                 except ValueError:
                     print("Invalid datetime format. Please use the format "
                           "specified")
-                # Optional TO DO: check that date is valid - later than or equal to today?
+                    continue
+                if selected_task['due_date'].date() < date.today():
+                    print("Please set a due date of today or later.")
+                else:
+                    break
+            # Update tasks.txt with new data, clear screen and display
+            # confirmation of the change made to due date.
             update_output()
-            print("The due date for this task has now been updated.")
-            # Return to start of detailed display loop
+            clear_screen()
+            print("The due date for this task has now been updated "
+                  f"to {selected_task['due_date'].date()}.")
 
         elif vm_choice.lower() == "r":
             # return to summary list
@@ -499,7 +510,7 @@ while not logged_in:
     logged_in = True
 
 #  MAIN PROGRAM ROUTINE
-        
+
 while True:
     # presents the menu to the user and converts input to lower case.
     print()
