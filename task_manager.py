@@ -177,6 +177,7 @@ def view_mine():
             continue
         user_select = int(user_select)
         if 0 < user_select <= len(user_task_list):
+            clear_screen()
             break
 
     # Loop that displays selected task with details and allows editing
@@ -206,7 +207,8 @@ def view_mine():
         vm_choice = input("Please enter a letter: ")
 
         if vm_choice.lower() == "c":
-            # Allow user to mark the current task as completed.
+            # If user confirms, mark selected task as complete.
+            # Return to summary display.
             print("\nPlease note: once marked as completed, the selected task "
                   "can no longer be edited.")
             while True:
@@ -223,7 +225,6 @@ def view_mine():
                           "still active.")
                     break
                 print("\nPlease select a valid option.")
-            # Return to task summary display
             view_mine()
 
         elif vm_choice.lower() == "u":
@@ -234,15 +235,24 @@ def view_mine():
                 print("\nThis task is already marked as completed and can "
                       "no longer be edited.")
                 continue
-            changed_user = input("\nPlease enter the user "
-                                "who you would like to assign this task to: ")
-            # OPTIONAL TO DO - check that the assigned user is registered.
-            # If not, display list of registered users and ask to reinput.
-            # Update username in task_list
-            selected_task['username'] = changed_user
+
+            # Display list of registered users and ask user to
+            # enter new assigned user's name. If in username_password,
+            # update relevant value in task_list.
+            while True:
+                print("\n\033[1mRegistered users:\033[0m\n")
+                for r_user in username_password.keys():
+                    print(f"{r_user}")
+                changed_user = input("\nWho would you like "
+                                "to assign this task to: ")
+                if changed_user in username_password.keys():
+                    selected_task['username'] = changed_user
+                    break
+                clear_screen()
+                print(f"\n{changed_user} is not a registered user.")
 
             # Write updated task_list to tasks.txt, print message
-            # and return to summary.
+            # and return to summary display.
             update_output()
             print("\nAssigned user has been updated. You can no longer edit this task.\n")
             view_mine()
