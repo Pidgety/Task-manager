@@ -17,6 +17,45 @@ from tabulate import tabulate
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 # FUNCTIONS
+def main_menu():
+    while True:
+        # presents the menu to the user and converts input to lower case.
+        print()
+        menu = input('''Select one of the following options below:\n
+    r -  Register a user
+    a -  Add a task
+    va - View all tasks
+    vm - View my task
+    gr - Generate reports
+    ds - Display statistics
+    e -  Exit
+    : ''').lower()
+
+        if menu == 'r':
+            reg_user()
+
+        elif menu == 'a':
+            add_task()
+
+        elif menu == 'va':
+            view_all()
+
+        elif menu == 'vm':
+            clear_screen()
+            view_mine()
+
+        elif menu == 'gr':
+            generate_reports()
+
+        elif menu == 'ds' and curr_user == 'admin':
+            display_stats()
+
+        elif menu == 'e':
+            print('Goodbye!!!')
+            exit()
+
+        else:
+            print("You have made a wrong choice. Please Try again")
 
 def reg_user():
     '''Add a new user to the user.txt file'''
@@ -153,8 +192,7 @@ def view_mine():
             user_task_list.append(t)
 
     # print a summary of all the current user's assigned tasks
-    clear_screen()
-    print("\n\033[1mTask summary:\033[0m\n")
+    print("\n\033[1mMy tasks (summary view):\033[0m\n")
 
     # If user_task_list is empty, inform user and exit function.
     if not user_task_list:
@@ -176,132 +214,163 @@ def view_mine():
         user_select = input("\nPlease enter a task number to view / edit a task\n"
                         "or type '-1' to return to the main menu: ")
         if user_select == "-1":
-            return
+            clear_screen()
+            main_menu()
         if not user_select.isnumeric():
             continue
         user_select = int(user_select)
         if 0 < user_select <= len(user_task_list):
             clear_screen()
+            for t in task_list:
+                if t == user_task_list[user_select-1]:
+                    selected_task = t
+            display_task(selected_task)
             break
 
-    # Loop that displays selected task with details and allows editing.
+def display_task(selected_task):
+    """Displays the details of the selected task passed as an argument"""
+
+    print("\n\033[1mTask details:\033[0m\n")
+
+    disp_str = f"Task: \t\t {selected_task['title']}\n"
+    disp_str += f"Assigned to: \t {selected_task['username']}\n"
+    disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
+        DATETIME_STRING_FORMAT)}\n"
+    disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
+        DATETIME_STRING_FORMAT)}\n"             # PC - add complete Yes or No below
+    disp_str += f"Task Description: \n {selected_task['description']}\n"
+    print(disp_str)
+    # Display menu to allow user to edit the selected task.
+    editing_menu(selected_task)
+
+
+def mark_complete(selected_task):
+    """Marks a selected task as completed, if not already marked as such, 
+    and calls the update_output function to update the output file."""
+
+    # Inform user if the task has already been marked as complete.
+    # Return to detailed view of selected task.
+    if selected_task['completed'] is True:
+        print("\nThis task has already been marked as completed "
+              "and can no longer be edited.")
+        display_task(selected_task)
+
+    # If user confirms choice, mark selected task as complete.
+    # Return to summary display.
+    print("\nPlease note: once marked as completed, the selected task "
+            "can no longer be edited.")
     while True:
-        print("\n\033[1mTask details:\033[0m\n")
-
-        for t in task_list:
-            if t == user_task_list[user_select-1]:
-                selected_task = t
-
-        disp_str = f"Task: \t\t {selected_task['title']}\n"
-        disp_str += f"Assigned to: \t {selected_task['username']}\n"
-        disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
-            DATETIME_STRING_FORMAT)}\n"
-        disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
-            DATETIME_STRING_FORMAT)}\n"
-        disp_str += f"Task Description: \n {selected_task['description']}\n"
-        print(disp_str)
-
-        # Display editing options to the user.
-        print("\nOptions:\n"
-            "c - mark this task as completed\n"
-            "u - change the assigned user\n"
-            "d - change the due date\n"
-            "r - return to the task summary screen\n"
-            "q - return to the main menu\n")
-        vm_choice = input("Please enter a letter: ")
-
-        if vm_choice.lower() == "c":
-            # If user confirms choice, mark selected task as complete.
-            # Return to summary display.
-            print("\nPlease note: once marked as completed, the selected task "
-                  "can no longer be edited.")
-            while True:
-                confirm_complete = input("\nPlease type 'y' to confirm task "
-                                     "completion or 'n' to go back: ")
-                if confirm_complete.lower() == "y":
-                    selected_task['completed'] = True
-                    update_output()
-                    print("\nThe selected task has been marked as completed "
-                          "and can no longer be edited.")
-                    break
-                if confirm_complete.lower() == "n":
-                    print("\nNo change has been made - the task is "
-                          "still active.")
-                    break
-                print("\nPlease select a valid option.")
-            view_mine()
-
-        elif vm_choice.lower() == "u":
-            # Allow user to assign the current task to a different user.
-            if selected_task['completed'] is True:
-                # clear screen
-                clear_screen()
-                print("\nThis task is already marked as completed and can "
-                      "no longer be edited.")
-                continue
-
-            # Display list of registered users and ask user to
-            # enter new assigned user's name. If in username_password,
-            # update relevant value in task_list.
-            while True:
-                print("\n\033[1mRegistered users:\033[0m\n")
-                for r_user in username_password.keys():
-                    print(f"{r_user}")
-                changed_user = input("\nWho would you like "
-                                "to assign this task to: ")
-                if changed_user in username_password.keys():
-                    selected_task['username'] = changed_user
-                    break
-                clear_screen()
-                print(f"\n{changed_user} is not a registered user.")
-
-            # Write updated task_list to tasks.txt, print message
-            # and return to summary display.
+        confirm_complete = input("\nPlease type 'y' to confirm task "
+                                "completion or 'n' to go back: ")
+        if confirm_complete.lower() == "y":
+            selected_task['completed'] = True
             update_output()
-            print("\nAssigned user has been updated. You can no longer edit this task.\n")
-            view_mine()
+            print("\nThe selected task has been marked as completed "
+                    "and can no longer be edited.")
+            break
+        if confirm_complete.lower() == "n":
+            print("\nNo change has been made - the task is "
+                    "still active.")
+            break
+        print("\nPlease select a valid option.")
+    view_mine()
 
-        elif vm_choice.lower() == "d":
-            # Allow user to change the due date.
-            if selected_task['completed'] is True:
-                # clear screen
-                clear_screen()
-                print("\nThis task is already marked as completed and can "
-                      "no longer be edited.")
-                continue
 
-            # Loop until user has entered a new due date that is in
-            # the correct format and >= today. 
-            while True:
-                try:
-                    changed_due_date = input("Please enter a new due date "
-                                             "for this task (YYYY-MM-DD): ")
-                    selected_task['due_date'] = datetime.strptime(
-                        changed_due_date, DATETIME_STRING_FORMAT)
-                except ValueError:
-                    print("Invalid datetime format. Please use the format "
-                          "specified")
-                    continue
-                if selected_task['due_date'].date() < date.today():
-                    print("Please set a due date of today or later.")
-                else:
-                    break
-            # Update tasks.txt with new data, clear screen and display
-            # confirmation of the change made to due date.
-            update_output()
-            clear_screen()
-            print("The due date for this task has now been updated "
-                  f"to {selected_task['due_date'].date()}.")
+def edit_assigned_user(selected_task):
+    # Allow user to assign the current task to a different user.
+    if selected_task['completed'] is True:
+        # clear screen
+        clear_screen()
+        print("\nThis task is already marked as completed and can "
+                "no longer be edited.")
+        display_task(selected_task)
 
-        elif vm_choice.lower() == "r":
-            # return to summary list
-            view_mine()
-        elif vm_choice.lower() == "q":
-            # return to main menu
-            return
-        else:
-            print("\nPlease select a valid option.")
+    # Display list of registered users and ask user to
+    # enter new assigned user's name. If in username_password,
+    # update relevant value in task_list.
+    while True:
+        print("\n\033[1mRegistered users:\033[0m\n")
+        for r_user in username_password.keys():
+            print(f"{r_user}")
+        changed_user = input("\nWho would you like "
+                        "to assign this task to: ")
+        if changed_user in username_password.keys():
+            selected_task['username'] = changed_user
+            break
+        clear_screen()
+        print(f"\n{changed_user} is not a registered user.")
+
+    # Write updated task_list to tasks.txt, print message
+    # and return to summary display.
+    update_output()
+    clear_screen()
+    print(f"\nAssigned user has been changed to {changed_user}. You can no longer edit this task.\n")
+    view_mine()
+
+
+def edit_due_date(selected_task):
+    # Allow user to change the due date.
+    if selected_task['completed'] is True:
+        # clear screen
+        clear_screen()
+        print("\nThis task is already marked as completed and can "
+                "no longer be edited.")
+        display_task(selected_task)
+
+    # Loop until user has entered a new due date that is in
+    # the correct format and >= today.
+    while True:
+        try:
+            changed_due_date = input("Please enter a new due date "
+                                        "for this task (YYYY-MM-DD): ")
+            selected_task['due_date'] = datetime.strptime(
+                changed_due_date, DATETIME_STRING_FORMAT)
+        except ValueError:
+            print("Invalid datetime format. Please use the format "
+                    "specified")
             continue
+        if selected_task['due_date'].date() < date.today():
+            print("Please set a due date of today or later.")
+        else:
+            break
+    # Update tasks.txt with new data, clear screen and display
+    # confirmation of the change made to due date.
+    update_output()
+    clear_screen()
+    print("The due date for this task has now been updated "
+            f"to {selected_task['due_date'].date()}.")
+
+
+def editing_menu(selected_task):
+
+    # Display editing options to the user.
+    print("\nOptions:\n"
+        "c - mark this task as completed\n"
+        "u - change the assigned user\n"
+        "d - change the due date\n"
+        "r - return to the task summary screen\n"
+        "q - return to the main menu\n")
+    vm_choice = input("Please enter a letter: ")
+
+    if vm_choice.lower() == "c":
+        mark_complete(selected_task)
+
+    elif vm_choice.lower() == "u":
+        edit_assigned_user(selected_task)
+
+    elif vm_choice.lower() == "d":
+        edit_due_date(selected_task)
+
+    elif vm_choice.lower() == "r":
+        # return to summary list
+        view_mine()
+    elif vm_choice.lower() == "q":
+        # return to main menu
+        main_menu()
+    else:
+        # redisplay editing_menu
+        print("\nPlease select a valid option.")
+        editing_menu(selected_task)
 
 
 def generate_reports():
@@ -511,40 +580,4 @@ while not logged_in:
 
 #  MAIN PROGRAM ROUTINE
 
-while True:
-    # presents the menu to the user and converts input to lower case.
-    print()
-    menu = input('''Select one of the following options below:\n
-r -  Register a user
-a -  Add a task
-va - View all tasks
-vm - View my task
-gr - Generate reports
-ds - Display statistics
-e -  Exit
-: ''').lower()
-
-    if menu == 'r':
-        reg_user()
-
-    elif menu == 'a':
-        add_task()
-
-    elif menu == 'va':
-        view_all()
-
-    elif menu == 'vm':
-        view_mine()
-
-    elif menu == 'gr':
-        generate_reports()
-
-    elif menu == 'ds' and curr_user == 'admin':
-        display_stats()
-
-    elif menu == 'e':
-        print('Goodbye!!!')
-        exit()
-
-    else:
-        print("You have made a wrong choice. Please Try again")
+main_menu()
