@@ -12,6 +12,7 @@ ADD MORE INFO"""
 #=====importing libraries===========
 import os
 from datetime import datetime, date
+from tabulate import tabulate
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
@@ -110,58 +111,63 @@ def add_task():
         task_file.write("\n".join(task_list_to_write))
     print("Task successfully added.")
 
+
 def view_all():
     '''Reads the task from task.txt file and prints to the console in the 
     format of Output 2 presented in the task pdf (i.e. includes spacing
     and labelling) 
     '''
-    # OPTIONAL - add a submenu to allow user to select:
-            # all tasks - due and completed
-            # all due tasks
-            # all completed tasks
-    # OPTIONAL - display a summary first and allow access to details when selected
+    print("\n\033[1mAll tasks:\033[0m\n")
+
+    # Display details for each task in task_list.
     for t in task_list:
-        disp_str = f"Task: \t\t {t['title']}\n"
+        disp_str = "________________________________________________________________________\n\n"
+        disp_str += f"Task: \t\t {t['title']}\n"
         disp_str += f"Assigned to: \t {t['username']}\n"
         disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(
             DATETIME_STRING_FORMAT)}\n"
         disp_str += f"Due Date: \t {t['due_date'].strftime(
             DATETIME_STRING_FORMAT)}\n"
+        disp_str += f"Task complete? \t {"Yes" if t['completed'] else "No"}\n"
         disp_str += f"Task Description: \n {t['description']}\n"
+        disp_str += "________________________________________________________________________"
         print(disp_str)
+
+    print(f"\n{len(task_list)} tasks displayed above.\n")
+
 
 def view_mine():
     '''Reads the task from task.txt file and prints to the console in the 
     format of Output 2 presented in the task pdf (i.e. includes spacing
     and labelling)
     '''
-    # PC - display all tasks in a manner that is easy to read.
-    # Initialise a list for storing the current user's assigned tasks
-    user_task_lookup = []
-    # Loop through the task_list and append user's tasks to user_task_lookup
+
+    # Loop through task_list and append user's tasks to user_task_list
+    user_task_list = []
     for t in task_list:
         if t['username'] == curr_user:
-            user_task_lookup.append(t)
+            user_task_list.append(t)
 
-    # print a summary of all the current user's assigned tasks - use tabulate to tidy up?
+    # print a summary of all the current user's assigned tasks
     clear_screen()
     print("\n\033[1mTask summary:\033[0m\n")
 
-    # TO DO - Check if user_task_lookup is empty
-    # TO DO - If empty, print a message saying this and return to main menu.
+    # If user_task_list is empty, inform user and exit function.
+    if not user_task_list:
+        print("You do not have any assigned tasks.\n")
+        return
 
-    # OPTIONAL TO DO - print in two sections with separate headings -
-    # incomplete tasks first and then completed
-    # TO DO - fix yes/no alignment issue
-    print("No.\tDue date\tTask\t\t\t\tCompleted?")
-    for i, t in enumerate(user_task_lookup, start=1):
-        print(f"{i}.\t{t['due_date'].strftime(
-            DATETIME_STRING_FORMAT)}\t{t['title']}\t\t\t{
-                "yes" if t['completed'] is True else "no"}")
+    # Display user's task data in a summary table.
+    table_data = []
+    for i, t in enumerate(user_task_list, start=1):
+        table_data.append([i,
+                           t['title'],
+                           "yes" if t['completed'] is True else "no", 
+                           t['due_date'].strftime(DATETIME_STRING_FORMAT)])
+    print(tabulate(table_data, 
+                   headers=["No.", "Task", "Completed?", "Due date"]))
 
-    # OPTIONAL TO DO - heading for completed section
-
-    # exit function if user_select = "-1". Check validity of user input
+    # Exit function if user_select = "-1". Check validity of user input.
     while True:
         user_select = input("\nPlease enter a task number to view / edit a task\n"
                         "or type '-1' to return to the main menu: ")
@@ -170,7 +176,7 @@ def view_mine():
         if not user_select.isnumeric():
             continue
         user_select = int(user_select)
-        if 0 < user_select <= len(user_task_lookup):
+        if 0 < user_select <= len(user_task_list):
             break
 
     # Loop that displays selected task with details and allows editing
@@ -178,7 +184,7 @@ def view_mine():
         print("\n\033[1mTask details:\033[0m\n")
 
         for t in task_list:
-            if t == user_task_lookup[user_select-1]:
+            if t == user_task_list[user_select-1]:
                 selected_task = t
 
         disp_str = f"Task: \t\t {selected_task['title']}\n"
