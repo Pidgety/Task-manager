@@ -17,7 +17,12 @@ from tabulate import tabulate
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 # FUNCTIONS
+
+# Menu functions:
+
 def main_menu():
+    """Presents the main menu to the user and calls relevant functions
+    depending on user choice"""
     while True:
         # presents the menu to the user and converts input to lower case.
         print()
@@ -48,6 +53,7 @@ def main_menu():
             generate_reports()
 
         elif menu == 'ds' and curr_user == 'admin':
+            clear_screen()
             display_stats()
 
         elif menu == 'e':
@@ -56,6 +62,9 @@ def main_menu():
 
         else:
             print("You have made a wrong choice. Please Try again")
+
+
+# Functions to add users and tasks:
 
 def reg_user():
     '''Add a new user to the user.txt file'''
@@ -155,35 +164,70 @@ def add_task():
     print("\nTask successfully added.")
 
 
+# Functions to view tasks
+
 def view_all():
-    '''Reads the task from task.txt file and prints to the console in the 
-    format of Output 2 presented in the task pdf (i.e. includes spacing
-    and labelling) 
-    '''
+    '''Reads the task from the task list generated from task.txt file 
+    and prints to the console in the format of Output 2 presented in the
+    task pdf (i.e. includes spacing and labelling) '''
 
-    # Display details for each task in task_list.
-    print("\n\033[1mAll tasks:\033[0m\n")
+    # Loop through task_list and call display_task for each task.
+    print("\n\033[1mAll tasks:\033[0m")
     for t in task_list:
-        disp_str = "________________________________________________________________________\n\n"
-        disp_str += f"Task: \t\t {t['title']}\n"
-        disp_str += f"Assigned to: \t {t['username']}\n"
-        disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(
-            DATETIME_STRING_FORMAT)}\n"
-        disp_str += f"Due Date: \t {t['due_date'].strftime(
-            DATETIME_STRING_FORMAT)}\n"
-        disp_str += f"Task complete? \t {"Yes" if t['completed'] else "No"}\n"
-        disp_str += f"Task Description: \n {t['description']}\n"
-        disp_str += "________________________________________________________________________"
-        print(disp_str)
-
+        display_task(t)
+    current_view = "detailed"
     print(f"\n{len(task_list)} tasks displayed above.\n")
+
+    while True:
+        change_view = input("\nEnter 'v' to toggle between detailed and "
+                            "summary view\n or 'q' to return to the "
+                            "main menu: ")
+        if change_view.lower() == "v" and current_view == "detailed":
+            summary_view(task_list)
+            current_view = "summary"
+        elif change_view.lower() == "v" and current_view == "summary":
+            view_all()
+        elif change_view.lower() == "q":
+            main_menu()
+        else:
+            print("\nPlease enter a valid letter.")
+            continue
+
+# PC - check that the below can be used to view individual tasks
+def display_task(selected_task):
+    """Displays the details of the selected task passed as an argument"""
+
+   # print("\n\033[1mTask details:\033[0m\n")
+    disp_str = "________________________________________________________________________\n\n"
+    disp_str += f"Task: \t\t {selected_task['title']}\n"
+    disp_str += f"Assigned to: \t {selected_task['username']}\n"
+    disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
+        DATETIME_STRING_FORMAT)}\n"
+    disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
+        DATETIME_STRING_FORMAT)}\n" 
+    disp_str += f"Task complete? \t {"Yes" if selected_task['completed'] else "No"}\n"
+    disp_str += f"Task Description: \n {selected_task['description']}\n"
+    disp_str += "________________________________________________________________________"
+    print(disp_str)
+    # editing_menu(selected_task)
+
+def summary_view(list):
+    # PC add display type from view mine
+    # Display user's task data in a summary table.
+    table_data = []
+    for i, t in enumerate(list, start=1):
+        table_data.append([i,
+                           t['title'],
+                           "yes" if t['completed'] is True else "no", 
+                           t['due_date'].strftime(DATETIME_STRING_FORMAT)])
+    print(tabulate(table_data,
+                   headers=["No.", "Task", "Completed?", "Due date"]))
 
 
 def view_mine():
-    '''Reads the task from task.txt file and prints to the console in the 
-    format of Output 2 presented in the task pdf (i.e. includes spacing
-    and labelling)
-    '''
+    '''Reads the tasks from a user-specific task list generated from 
+    task.txt and prints to the console in the format of Output 2
+    presented in the task pdf (i.e. includes spacing and labelling)'''
 
     # Loop through task_list and append user's tasks to user_task_list
     user_task_list = []
@@ -191,23 +235,23 @@ def view_mine():
         if t['username'] == curr_user:
             user_task_list.append(t)
 
-    # print a summary of all the current user's assigned tasks
-    print("\n\033[1mMy tasks (summary view):\033[0m\n")
-
     # If user_task_list is empty, inform user and exit function.
     if not user_task_list:
         print("You do not have any assigned tasks.\n")
         return
 
-    # Display user's task data in a summary table.
-    table_data = []
+    # PC add code to call details display_task on user_task_list with enumerate:
+
+    print("\n\033[1mMy tasks (detailed view):\033[0m\n")
     for i, t in enumerate(user_task_list, start=1):
-        table_data.append([i,
-                           t['title'],
-                           "yes" if t['completed'] is True else "no", 
-                           t['due_date'].strftime(DATETIME_STRING_FORMAT)])
-    print(tabulate(table_data,
-                   headers=["No.", "Task", "Completed?", "Due date"]))
+        print(f"Task No: {i}")
+        display_task(t)
+
+
+    # print a summary of all the current user's assigned tasks - include as option
+    print("\n\033[1mMy tasks (summary view):\033[0m\n")
+
+    summary_view(user_task_list) # PC for testing - later include as an optional display type in while loop
 
     # Exit function if user_select = "-1". Check validity of user input.
     while True:
@@ -224,24 +268,9 @@ def view_mine():
             for t in task_list:
                 if t == user_task_list[user_select-1]:
                     selected_task = t
+            print("\033[1mSelected task:\033[0m\n")
             display_task(selected_task)
-            break
-
-def display_task(selected_task):
-    """Displays the details of the selected task passed as an argument"""
-
-    print("\n\033[1mTask details:\033[0m\n")
-
-    disp_str = f"Task: \t\t {selected_task['title']}\n"
-    disp_str += f"Assigned to: \t {selected_task['username']}\n"
-    disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
-        DATETIME_STRING_FORMAT)}\n"
-    disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
-        DATETIME_STRING_FORMAT)}\n"             # PC - add complete Yes or No below
-    disp_str += f"Task Description: \n {selected_task['description']}\n"
-    print(disp_str)
-    # Display menu to allow user to edit the selected task.
-    editing_menu(selected_task)
+            editing_menu(selected_task)
 
 
 def mark_complete(selected_task):
@@ -254,26 +283,26 @@ def mark_complete(selected_task):
         print("\nThis task has already been marked as completed "
               "and can no longer be edited.")
         display_task(selected_task)
-
-    # If user confirms choice, mark selected task as complete.
-    # Return to summary display.
-    print("\nPlease note: once marked as completed, the selected task "
+    else:
+        # If user confirms choice, mark selected task as complete.
+        # Return to summary display.
+        print("\nPlease note: once marked as completed, the selected task "
             "can no longer be edited.")
-    while True:
-        confirm_complete = input("\nPlease type 'y' to confirm task "
-                                "completion or 'n' to go back: ")
-        if confirm_complete.lower() == "y":
-            selected_task['completed'] = True
-            update_output()
-            print("\nThe selected task has been marked as completed "
-                    "and can no longer be edited.")
-            break
-        if confirm_complete.lower() == "n":
-            print("\nNo change has been made - the task is "
-                    "still active.")
-            break
-        print("\nPlease select a valid option.")
-    view_mine()
+        while True:
+            confirm_complete = input("\nPlease type 'y' to confirm task "
+                                    "completion or 'n' to go back: ")
+            if confirm_complete.lower() == "y":
+                selected_task['completed'] = True
+                update_output()
+                print("\nThe selected task has now been marked as completed "
+                        "and can no longer be edited.")
+                break
+            if confirm_complete.lower() == "n":
+                print("\nNo change has been made - the task is "
+                        "still active.")
+                break
+            print("\nPlease select a valid option.")
+        view_mine()
 
 
 def edit_assigned_user(selected_task):
@@ -353,6 +382,7 @@ def editing_menu(selected_task):
     vm_choice = input("Please enter a letter: ")
 
     if vm_choice.lower() == "c":
+        clear_screen()
         mark_complete(selected_task)
 
     elif vm_choice.lower() == "u":
