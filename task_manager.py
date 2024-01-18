@@ -110,10 +110,11 @@ def reg_user():
 def add_task():
     '''Allow user to add a new task to task.txt file
     Prompt user for the following: 
-        - the username of the person whom the task is assigned to,
-        - the title of a task,
+        - the user to assign the task to,
+        - the title of the task,
         - the description of the task and 
         - the due date of the task.'''
+
     print("\033[1mAdd a task\033[0m")
 
     # Loop until user enters the username of a registered user.
@@ -132,13 +133,14 @@ def add_task():
     task_title = input("\nTitle of Task: ")
     # add code to print character limit
     # Check that the task title is below character limit and reprompt if not.
-    # add code to check the title is not already in the list (i.e. is unique)
+    # add code to check the title is not already in the list for the assigned user
     # if it is, prompt user to choose a different title
-    # Get the current date
     task_description = input("\nDescription of Task: ")
+    # TO DO - test what happens if user enters a string that is too long
+    # TO DO - impose a limit or display on multiple lines?
 
+    # Get the current date.
     curr_date = date.today()
-
     # Loop until user provides a due date that is in the correct format
     # and is >= today.
     while True:
@@ -236,11 +238,13 @@ def display_task(selected_task):
     print(disp_str)
     # editing_menu(selected_task)
 
-def summary_view(list):
-    # PC add display type from view mine
-    # Display user's task data in a summary table.
+def summary_view(list_name):
+    """Loops through the list of tasks passed as an argument and
+    displays a table containing a one-row summary of each task
+    with an accompanying number)"""
+
     table_data = []
-    for i, t in enumerate(list, start=1):
+    for i, t in enumerate(list_name, start=1):
         table_data.append([i,
                            t['title'],
                            "yes" if t['completed'] is True else "no", 
