@@ -27,19 +27,21 @@ def main_menu():
         # presents the menu to the user and converts input to lower case.
         print()
         menu = input('''Select one of the following options below:\n
-    r -  Register a user
-    a -  Add a task
-    va - View all tasks
-    vm - View my task
-    gr - Generate reports
-    ds - Display statistics
-    e -  Exit
-    : ''').lower()
+        r -  Register a user
+        a -  Add a task
+        va - View all tasks
+        vm - View my task
+        gr - Generate reports
+        ds - Display statistics
+        e -  Exit
+        : ''').lower()
 
         if menu == 'r':
+            clear_screen()
             reg_user()
 
         elif menu == 'a':
+            clear_screen()
             add_task()
 
         elif menu == 'va':
@@ -50,6 +52,7 @@ def main_menu():
             view_mine()
 
         elif menu == 'gr':
+            clear_screen()
             generate_reports()
 
         elif menu == 'ds' and curr_user == 'admin':
@@ -61,7 +64,8 @@ def main_menu():
             exit()
 
         else:
-            print("You have made a wrong choice. Please Try again")
+            clear_screen()
+            print("You have entered an invalid option. Please try again.")
 
 
 # Functions to add users and tasks:
@@ -69,12 +73,13 @@ def main_menu():
 def reg_user():
     '''Add a new user to the user.txt file'''
 
+    print("\033[1mRegister a new user\033[0m")
     # Loop until user enters a username that is not already in the
     # list of registered users.
-    new_username = input("New Username: ")
+    new_username = input("\nNew Username: ")
     while True:
         if new_username in username_password.keys():
-            new_username = input("That username already exists. Please enter another: ")
+            new_username = input("\nThat username already exists. Please enter another: ")
         else:
             break
 
@@ -83,12 +88,13 @@ def reg_user():
     # username_password dictionary and write dictionary to
     # users.txt output file.
     while True:
-        new_password = input("New Password: ")
+        new_password = input("\nNew Password: ")
         confirm_password = input("Confirm Password: ")
 
         if new_password == confirm_password:
-            print(f"\nNew user added: {new_username}\n")
             username_password[new_username] = new_password
+            clear_screen()
+            print(f"\nNew user successfully added: {new_username}")
 
             with open("user.txt", "w", encoding="utf-8") as out_file:
                 user_data = []
@@ -96,7 +102,7 @@ def reg_user():
                     user_data.append(f"{k};{username_password[k]}")
                 out_file.write("\n".join(user_data))
             break
-        print("Passwords do not match.")
+        print("\nPasswords do not match. Please enter your password again.")
 
 
 def add_task():
@@ -106,11 +112,15 @@ def add_task():
         - the title of a task,
         - the description of the task and 
         - the due date of the task.'''
+    print("\033[1mAdd a task\033[0m")
 
-    task_username = input("Name of person assigned to task: ")
-    if task_username not in username_password.keys():
-        print("User does not exist. Please enter a valid username")
-        return
+    while True:
+        task_username = input("\nUser to be assigned to task: ")
+        if task_username not in username_password.keys():
+            print("\nThat user does not exist. Please enter a valid username.") # show list here?
+        else:
+            break
+
     task_title = input("Title of Task: ")
     # add code to print character limit
     # Check that the task title is below character limit and reprompt if not.
@@ -119,10 +129,10 @@ def add_task():
     # Get the current date
     task_description = input("Description of Task: ")
 
-    # Loop until user provides a due date that is in the correct format
-    # and is >= today.
     curr_date = date.today()
 
+    # Loop until user provides a due date that is in the correct format
+    # and is >= today.
     while True:
         try:
             task_due_date = input("Due date of task (YYYY-MM-DD): ")
@@ -135,8 +145,9 @@ def add_task():
         else:
             break
 
-    # Add the data to the file task.txt and
-    # Include 'No' to indicate if the task is complete.
+    # Add input values to a new_task dictionary and append to task_list
+    # Loop through task_list and create list of ';'- separated strings.
+    # Write the data to task.txt with each task on a new line.
     new_task = {
         "username": task_username,
         "title": task_title,
@@ -164,7 +175,7 @@ def add_task():
     print("\nTask successfully added.")
 
 
-# Functions to view tasks
+# Functions to view tasks:
 
 def view_all():
     '''Reads the task from the task list generated from task.txt file 
@@ -204,7 +215,7 @@ def display_task(selected_task):
     disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
         DATETIME_STRING_FORMAT)}\n"
     disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
-        DATETIME_STRING_FORMAT)}\n" 
+        DATETIME_STRING_FORMAT)}\n"
     disp_str += f"Task complete? \t {"Yes" if selected_task['completed'] else "No"}\n"
     disp_str += f"Task Description: \n {selected_task['description']}\n"
     disp_str += "________________________________________________________________________"
@@ -259,7 +270,7 @@ def view_mine():
             clear_screen()
             main_menu()
         elif user_select.lower() == "v" and current_view == "detailed":
-            # Switch to summary view of all user's tasks. 
+            # Switch to summary view of all user's tasks.
             print("\n\033[1mMy tasks (summary view):\033[0m\n")
             summary_view(user_task_list)
             current_view = "summary"
@@ -272,7 +283,7 @@ def view_mine():
             # If it is use input to match the task to that in main
             # task_list and set task to selected_task, passing it to
             # display_task() and editing_menu().
-        elif user_select.isnumeric(): 
+        elif user_select.isnumeric():
             user_select = int(user_select)
             if 0 < user_select <= len(user_task_list):
                 clear_screen()
@@ -605,7 +616,7 @@ for user in user_data:
     username_password[username] = password
 
 print("\n\033[1mWelcome to this task management program.\033[0m\n")
-print("If you do not have an account, please ask your Admin user to register you.\n")
+print("If you do not have an account, please ask a registered user to add you.\n")
 
 logged_in = False
 while not logged_in:
@@ -614,15 +625,15 @@ while not logged_in:
     curr_user = input("Username: ")
     curr_pass = input("Password: ")
     if curr_user not in username_password.keys():
-        print("User does not exist")
+        print("\nThat username does not exist.")
         continue
     if username_password[curr_user] != curr_pass:
-        print("Wrong password")
+        print("\nIncorrect password.")
         continue
     clear_screen()
     print("Login successful!")
     logged_in = True
 
-#  MAIN PROGRAM ROUTINE
+#  MAIN PROGRAM ROUTINE:
 
 main_menu()
