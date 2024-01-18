@@ -246,31 +246,45 @@ def view_mine():
     for i, t in enumerate(user_task_list, start=1):
         print(f"Task No: {i}")
         display_task(t)
+    current_view = "detailed"
 
-
-    # print a summary of all the current user's assigned tasks - include as option
-    print("\n\033[1mMy tasks (summary view):\033[0m\n")
-
-    summary_view(user_task_list) # PC for testing - later include as an optional display type in while loop
-
-    # Exit function if user_select = "-1". Check validity of user input.
     while True:
-        user_select = input("\nPlease enter a task number to view / edit a task\n"
-                        "or type '-1' to return to the main menu: ")
-        if user_select == "-1":
+        print("View / edit options:\n")
+        user_select = input("\nEnter a task number to make changes\n"
+                            "'v'  - toggle between detailed and summary view\n"
+                            "'-1' - return to the main menu: ")
+
+        if user_select.lower() == "-1":
+            # Clear screen and return to main menu.
             clear_screen()
             main_menu()
-        if not user_select.isnumeric():
-            continue
-        user_select = int(user_select)
-        if 0 < user_select <= len(user_task_list):
-            clear_screen()
-            for t in task_list:
-                if t == user_task_list[user_select-1]:
-                    selected_task = t
+        elif user_select.lower() == "v" and current_view == "detailed":
+            # Switch to summary view of all user's tasks. 
+            print("\n\033[1mMy tasks (summary view):\033[0m\n")
+            summary_view(user_task_list)
+            current_view = "summary"
+        elif user_select.lower() == "v" and current_view == "summary":
+            # Switch to default detailed view by returning to start
+            # of current function.
+            view_mine()
+            # If input is numeric, cast as Int and check that it is
+            # within the range of displayed task numbers.
+            # If it is use input to match the task to that in main
+            # task_list and set task to selected_task, passing it to
+            # display_task() and editing_menu().
+        elif user_select.isnumeric(): 
+            user_select = int(user_select)
+            if 0 < user_select <= len(user_task_list):
+                clear_screen()
+                for t in task_list:
+                    if t == user_task_list[user_select-1]:
+                        selected_task = t
             print("\033[1mSelected task:\033[0m\n")
             display_task(selected_task)
             editing_menu(selected_task)
+        else:
+            print("\nPlease enter a valid letter.")
+            continue
 
 
 def mark_complete(selected_task):
@@ -333,7 +347,8 @@ def edit_assigned_user(selected_task):
     # and return to summary display.
     update_output()
     clear_screen()
-    print(f"\nAssigned user has been changed to {changed_user}. You can no longer edit this task.\n")
+    print(f"\nAssigned user has been changed to {changed_user}.\n"
+          "You can no longer edit this task.\n")
     view_mine()
 
 
