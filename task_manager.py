@@ -45,6 +45,7 @@ def main_menu():
             add_task()
 
         elif menu == 'va':
+            clear_screen()
             view_all()
 
         elif menu == 'vm':
@@ -60,7 +61,8 @@ def main_menu():
             display_stats()
 
         elif menu == 'e':
-            print('Goodbye!!!')
+            clear_screen()
+            print('Thank you for using this task management program.')
             exit()
 
         else:
@@ -114,20 +116,26 @@ def add_task():
         - the due date of the task.'''
     print("\033[1mAdd a task\033[0m")
 
+    # Loop until user enters the username of a registered user.
+    # If not registered, display a list of registered users.
     while True:
-        task_username = input("\nUser to be assigned to task: ")
+        task_username = input("\nUser to be assigned to the task: ")
         if task_username not in username_password.keys():
-            print("\nThat user does not exist. Please enter a valid username.") # show list here?
-        else:
-            break
+            print(f"\n{task_username} is not a registered user.\n"
+                  "\nPlease enter a name from the list below.")
+            print("\n\033[1mRegistered users:\033[0m\n")
+            for r_user in username_password.keys():
+                print(f"{r_user}")
+            continue
+        break
 
-    task_title = input("Title of Task: ")
+    task_title = input("\nTitle of Task: ")
     # add code to print character limit
     # Check that the task title is below character limit and reprompt if not.
     # add code to check the title is not already in the list (i.e. is unique)
     # if it is, prompt user to choose a different title
     # Get the current date
-    task_description = input("Description of Task: ")
+    task_description = input("\nDescription of Task: ")
 
     curr_date = date.today()
 
@@ -135,13 +143,13 @@ def add_task():
     # and is >= today.
     while True:
         try:
-            task_due_date = input("Due date of task (YYYY-MM-DD): ")
+            task_due_date = input("\nDue date of task (YYYY-MM-DD): ")
             due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
         except ValueError:
-            print("Invalid datetime format. Please use the format specified.")
+            print("\nInvalid datetime format. Please use the format specified.")
             continue
         if due_date_time.date() < curr_date:
-            print("Please set a due date of today or later.")
+            print("\nPlease set a due date of today or later.")
         else:
             break
 
@@ -183,20 +191,24 @@ def view_all():
     task pdf (i.e. includes spacing and labelling) '''
 
     # Loop through task_list and call display_task for each task.
-    print("\n\033[1mAll tasks:\033[0m")
-    for t in task_list:
+    print("\n\033[1mAll tasks (detailed view):\033[0m\n")
+    for i, t in enumerate(task_list, start=1):
+        print(f"Task {i}")
         display_task(t)
     current_view = "detailed"
-    print(f"\n{len(task_list)} tasks displayed above.\n")
+    print(f"{len(task_list)} tasks displayed above.\n")
 
     while True:
         change_view = input("\nEnter 'v' to toggle between detailed and "
                             "summary view\n or 'q' to return to the "
                             "main menu: ")
         if change_view.lower() == "v" and current_view == "detailed":
+            clear_screen()
+            print("\n\033[1mAll tasks (summary view)\033[0m\n")
             summary_view(task_list)
             current_view = "summary"
         elif change_view.lower() == "v" and current_view == "summary":
+            clear_screen()
             view_all()
         elif change_view.lower() == "q":
             main_menu()
@@ -209,7 +221,8 @@ def display_task(selected_task):
     """Displays the details of the selected task passed as an argument"""
 
    # print("\n\033[1mTask details:\033[0m\n")
-    disp_str = "________________________________________________________________________\n\n"
+    disp_str = ("-------------------------------------------------------------"
+                "----------------\n")
     disp_str += f"Task: \t\t {selected_task['title']}\n"
     disp_str += f"Assigned to: \t {selected_task['username']}\n"
     disp_str += f"Date Assigned: \t {selected_task['assigned_date'].strftime(
@@ -218,7 +231,8 @@ def display_task(selected_task):
         DATETIME_STRING_FORMAT)}\n"
     disp_str += f"Task complete? \t {"Yes" if selected_task['completed'] else "No"}\n"
     disp_str += f"Task Description: \n {selected_task['description']}\n"
-    disp_str += "________________________________________________________________________"
+    disp_str += ("-------------------------------------------------------------"
+                 "----------------\n")
     print(disp_str)
     # editing_menu(selected_task)
 
@@ -251,8 +265,8 @@ def view_mine():
         print("You do not have any assigned tasks.\n")
         return
 
-    # PC add code to call details display_task on user_task_list with enumerate:
-
+    # For each task in user_task_list, print a task number and pass
+    # task to display_task()
     print("\n\033[1mMy tasks (detailed view):\033[0m\n")
     for i, t in enumerate(user_task_list, start=1):
         print(f"Task No: {i}")
