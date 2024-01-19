@@ -130,9 +130,15 @@ def add_task():
             continue
         break
 
-    task_title = input("\nTitle of Task: ")
-    # add code to print character limit
-    # Check that the task title is below character limit and reprompt if not.
+    # Loop until 0 < len(task_title) <= 60.
+    while True:
+        task_title = input("\nTitle of Task (max 60 characters): ")
+        if not task_title:
+            print("\nPlease enter a title for this task.")
+        elif len(task_title) > 60:
+            print("\nTitle too long - maximum length is 60 characters.")
+        else:
+            break
     # add code to check the title is not already in the list for the assigned user
     # if it is, prompt user to choose a different title
     task_description = input("\nDescription of Task: ")
@@ -141,8 +147,8 @@ def add_task():
 
     # Get the current date.
     curr_date = date.today()
-    # Loop until user provides a due date that is in the correct format
-    # and is >= today.
+    
+    # Loop until due date is in the correct format and is >= today.
     while True:
         try:
             task_due_date = input("\nDue date of task (YYYY-MM-DD): ")
@@ -287,18 +293,21 @@ def view_mine():
             # Clear screen and return to main menu.
             clear_screen()
             main_menu()
+
         elif user_select.lower() == "v" and current_view == "detailed":
             # Switch to summary view of all user's tasks.
             print("\n\033[1mMy tasks (summary view):\033[0m\n")
             summary_view(user_task_list)
             current_view = "summary"
+
         elif user_select.lower() == "v" and current_view == "summary":
             # Switch to default detailed view by returning to start
             # of current function.
             view_mine()
+
             # If input is numeric, cast as Int and check that it is
             # within the range of displayed task numbers.
-            # If it is use input to match the task to that in main
+            # If it is, use input to match the task to that in main
             # task_list and set task to selected_task, passing it to
             # display_task() and editing_menu().
         elif user_select.isnumeric():
@@ -311,6 +320,7 @@ def view_mine():
             print("\033[1mSelected task:\033[0m\n")
             display_task(selected_task)
             editing_menu(selected_task)
+
         else:
             print("\nPlease enter a valid letter.")
             continue
