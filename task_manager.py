@@ -523,7 +523,14 @@ def generate_reports():
     print("\nUser and task overview reports have been generated.\n")
 
 def generate_task_overview():
-    # Generate task overview report
+    '''Generates a .txt file containing the following data:
+       - total number of tasks in task_list
+       - total number of completed tasks
+       - total number of uncompleted tasks
+       - total number of overdue tasks
+       - percentage of tasks that are incomplete
+       - percentage of tasks that are overdue'''
+
     # Calculate task overview report data
     no_tasks = len(task_list)
     no_completed = 0
@@ -543,7 +550,9 @@ def generate_task_overview():
 
     # Write task overview report to output file.
     with open("task_overview.txt", "w", encoding = "utf-8") as t_rpt:
-        t_rpt.write("Task overview:\n")
+        t_rpt.write("Task overview:\t\t\t\t\tReport generated: "
+                    f"{datetime.strftime(
+                        datetime.today(),"%Y-%m-%d %H:%M:%S" )}\n")
         if not task_list:
             t_rpt.write("No task data has been generated.")
         else:
@@ -551,8 +560,8 @@ def generate_task_overview():
             t_rpt.write(f"\nNumber of completed tasks: {no_completed}")
             t_rpt.write(f"\nNumber of incomplete tasks: {no_incomplete}")
             t_rpt.write(f"\nNumber of overdue incomplete tasks: {no_overdue}")
-            t_rpt.write(f"\nPercentage of tasks that are incomplete: {percent_incomplete} %")
-            t_rpt.write(f"\nPercentage of tasks that are overdue: {percent_overdue} %")
+            t_rpt.write(f"\nPercentage of tasks that are incomplete: {percent_incomplete}%")
+            t_rpt.write(f"\nPercentage of tasks that are overdue: {percent_overdue}%")
 
 def user_overview():
     '''Generate a .txt file containing the following statistics:
@@ -568,7 +577,8 @@ def user_overview():
     num_tasks = len(task_list)
     # Write totals section of overview report to output file
     with open("user_overview.txt", "w", encoding = "utf-8") as u_rpt:
-        u_rpt.write("User overview\n")
+        u_rpt.write("User overview:\t\t\t\t\tReport generated: "
+                    f"{datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S")}\n")
         u_rpt.write(f"\nNumber of registered users: {len(user_data)}")
         u_rpt.write(f"\nTotal tasks in task list: {num_tasks}\n")
 
