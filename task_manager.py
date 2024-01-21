@@ -90,6 +90,7 @@ def editing_menu(selected_task):
             mark_complete(selected_task)
 
         elif vm_choice.lower() == "u":
+            clear_screen()
             edit_assigned_user(selected_task)
 
         elif vm_choice.lower() == "d":
@@ -311,10 +312,13 @@ def view_mine():
     the user and calls editing_menu() to provide editing options.'''
 
     def view_mine_options():
-        print(f"\nYou currently have {len(user_task_list)} tasks assigned to you.")
+        print(f"\nYou currently have {len(user_task_list)} "
+              f"task{"s" if len(user_task_list) > 1 else ""} "
+              "assigned to you.")
 
         print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n   - enter a task number (1 to {len(user_task_list)}) to edit"
+        print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to edit"
+                    if len(user_task_list) > 1 else " 1 - edit that task"}"
         "\n v - toggle between detailed and summary view"
         "\n-1 - return to the main menu: ")
 
@@ -447,7 +451,7 @@ def edit_assigned_user(selected_task):
         for r_user in username_password.keys():
             print(f"{r_user}")
         changed_user = input("\nWho would you like "
-                        "to assign this task to: ")
+                        "to assign this task to?\n: ")
         if changed_user == selected_task['username']:
             clear_screen()
             print("\nYou are already assigned to this task"
@@ -466,6 +470,8 @@ def edit_assigned_user(selected_task):
     clear_screen()
     print(f"\nAssigned user has been changed to {changed_user}.\n"
           "You can no longer edit this task.\n")
+    input("\nPlease press enter to continue: ")
+    clear_screen()
     view_mine()
 
 
