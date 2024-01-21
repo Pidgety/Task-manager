@@ -403,6 +403,10 @@ def edit_assigned_user(selected_task):
 
 
 def edit_due_date(selected_task):
+    """Allows user to change the due date of a selected task.
+    Checks new due date is valid and calls update_output() to
+    write changes to the tasks.txt output file. Accepts 1 argument -
+    the task dictionary to be edited."""
     # Allow user to change the due date.
     if selected_task['completed'] is True:
         # clear screen
