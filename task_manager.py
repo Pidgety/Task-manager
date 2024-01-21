@@ -30,7 +30,7 @@ def main_menu():
         r -  Register a user
         a -  Add a task
         va - View all tasks
-        vm - View my task
+        vm - View my tasks
         gr - Generate reports
         ds - Display statistics
         e -  Exit
@@ -68,6 +68,43 @@ def main_menu():
         else:
             clear_screen()
             print("You have entered an invalid option. Please try again.")
+
+
+def editing_menu(selected_task):
+    """Displays a menu to the user and directs to the relevant function
+    allowing the task to be edited. Accepts 1 argument - the task
+    dictionary selected for editing"""
+
+    # Display editing options to the user.
+    print("\nOptions:\n"
+        "c - mark this task as completed\n"
+        "u - change the assigned user\n"
+        "d - change the due date\n"
+        "r - return to my task list\n"
+        "q - return to the main menu\n")
+
+    while True:
+        vm_choice = input("Please enter a letter: ")
+
+        if vm_choice.lower() == "c":
+            mark_complete(selected_task)
+
+        elif vm_choice.lower() == "u":
+            edit_assigned_user(selected_task)
+
+        elif vm_choice.lower() == "d":
+            edit_due_date(selected_task)
+
+        elif vm_choice.lower() == "r":
+            # return to current user's task list
+            clear_screen()
+            view_mine()
+
+        elif vm_choice.lower() == "q":
+            # return to main menu
+            main_menu()
+        else:
+            print("\nPlease select a valid option.")
 
 
 # Functions to add users and tasks:
@@ -193,26 +230,30 @@ def add_task():
 
 def view_all():
     '''Reads the task from the task list generated from task.txt file 
-    and prints to the console in the format of Output 2 presented in the
-    task pdf (i.e. includes spacing and labelling) '''
+    and, for each task, calls the function display_task() to display
+    task details to the console. Presents a menu to the user giving the
+    option to switch between detailed and summary views of the tasks.'''
 
     # If task_list is empty, inform user and exit function.
     if not task_list:
         print("\nNo tasks have been created yet.\n")
         return
 
-    # Loop through task_list and call display_task for each task.
+    # Loop through task_list and call display_task() for each task.
     print("\n\033[1mAll tasks (detailed view):\033[0m\n")
     for i, t in enumerate(task_list, start=1):
         print(f"Task {i}")
         display_task(t)
     current_view = "detailed"
-    print(f"{len(task_list)} tasks displayed above.\n")
+    print(f"Total number of tasks (all users): {len(task_list)}\n")
 
+    # Give user the option to toggle between detailed and summary
+    # lists or to return to the main menu.
     while True:
-        change_view = input("\nEnter 'v' to toggle between detailed and "
-                            "summary view\n or 'q' to return to the "
-                            "main menu: ")
+
+        change_view = input("\nOptions:\n'v' - toggle detailed / "
+                            "summary view\n'q' - return to the "
+                            "main menu\n: ")
         if change_view.lower() == "v" and current_view == "detailed":
             clear_screen()
             print("\n\033[1mAll tasks (summary view)\033[0m\n")
@@ -222,16 +263,16 @@ def view_all():
             clear_screen()
             view_all()
         elif change_view.lower() == "q":
+            clear_screen()
             main_menu()
         else:
             print("\nPlease enter a valid letter.")
             continue
 
-# PC - check that the below can be used to view individual tasks
+
 def display_task(selected_task):
     """Displays the details of the selected task passed as an argument"""
 
-   # print("\n\033[1mTask details:\033[0m\n")
     disp_str = ("-------------------------------------------------------------"
                 "----------------\n")
     disp_str += f"Task: \t\t {selected_task['title']}\n"
@@ -245,7 +286,7 @@ def display_task(selected_task):
     disp_str += ("-------------------------------------------------------------"
                  "----------------\n")
     print(disp_str)
-    # editing_menu(selected_task)
+
 
 def summary_view(list_name):
     """Loops through the list of tasks passed as an argument and
@@ -264,8 +305,18 @@ def summary_view(list_name):
 
 def view_mine():
     '''Reads the tasks from a user-specific task list generated from 
-    task.txt and prints to the console in the format of Output 2
-    presented in the task pdf (i.e. includes spacing and labelling)'''
+    task.txt and, for each task, prints a task number and calls
+    display_task(). Allows user to toggle between detailed and summary
+    views and to select a task for editing.  Displays task selected by
+    the user and calls editing_menu() to provide editing options.'''
+
+    def view_mine_options():
+        print(f"\nYou currently have {len(user_task_list)} tasks assigned to you.")
+
+        print("\n\033[1mView / edit options:\033[0m")
+        print(f"\n   - enter a task number (1 to {len(user_task_list)}) to edit"
+        "\n v - toggle between detailed and summary view"
+        "\n-1 - return to the main menu: ")
 
     # Loop through task_list and append user's tasks to user_task_list
     user_task_list = []
@@ -285,14 +336,10 @@ def view_mine():
         print(f"Task No: {i}")
         display_task(t)
     current_view = "detailed"
-    print(f"\nYou currently have {len(user_task_list)} tasks assigned to you.")
+    view_mine_options()
 
     while True:
 
-        print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n   - enter a task number (1 to {len(user_task_list)}) to edit"
-        "\n v - toggle between detailed and summary view"
-        "\n-1 - return to the main menu: ")
         user_select = input("\nPlease enter your choice: ")
 
         if user_select.lower() == "-1":
@@ -306,6 +353,7 @@ def view_mine():
             print("\n\033[1mMy tasks (summary view):\033[0m\n")
             summary_view(user_task_list)
             current_view = "summary"
+            view_mine_options()
 
         elif user_select.lower() == "v" and current_view == "summary":
             # Switch to default detailed view by returning to start
@@ -333,9 +381,11 @@ def view_mine():
             editing_menu(selected_task)
 
         else:
+
             print("\nInvalid choice")
             continue
 
+# Functions for editing tasks:
 
 def mark_complete(selected_task):
     """Marks a selected task as completed, if not already marked as such, 
@@ -344,9 +394,11 @@ def mark_complete(selected_task):
     # Inform user if the task has already been marked as complete.
     # Return to detailed view of selected task.
     if selected_task['completed'] is True:
+        clear_screen()
         print("\nThis task has already been marked as completed "
-              "and can no longer be edited.")
+              "and can no longer be edited.\n")
         display_task(selected_task)
+        editing_menu(selected_task)
     else:
         # If user confirms choice, mark selected task as complete.
         # Return to summary display.
@@ -358,35 +410,50 @@ def mark_complete(selected_task):
             if confirm_complete.lower() == "y":
                 selected_task['completed'] = True
                 update_output()
+                clear_screen()
                 print("\nThe selected task has now been marked as completed "
-                        "and can no longer be edited.")
-                break
-            if confirm_complete.lower() == "n":
+                        "and can no longer be edited.\n")
+                display_task(selected_task)
+                editing_menu(selected_task)
+
+            elif confirm_complete.lower() == "n":
+                clear_screen()
                 print("\nNo change has been made - the task is "
-                        "still active.")
-                break
-            print("\nPlease select a valid option.")
-        view_mine()
+                        "still active.\n")
+                display_task(selected_task)
+                editing_menu(selected_task)
+            else:
+                print("\nPlease select a valid option.")
 
 
 def edit_assigned_user(selected_task):
-    # Allow user to assign the current task to a different user.
+    '''Allow user to reassign an uncompleted task to a different
+    user. Takes one argument - the selected task dictionary.'''
+
+    # If selected task already marked as compete, inform user and
+    # redisplay task details and menu.
     if selected_task['completed'] is True:
-        # clear screen
         clear_screen()
         print("\nThis task is already marked as completed and can "
-                "no longer be edited.")
+                "no longer be edited.\n")
         display_task(selected_task)
+        editing_menu(selected_task)
 
-    # Display list of registered users and ask user to
-    # enter new assigned user's name. If in username_password,
-    # update relevant value in task_list.
+    # Display list of registered users and prompt user to enter new
+    # assigned user's name until input matches a key in
+    # username_password.
     while True:
         print("\n\033[1mRegistered users:\033[0m\n")
         for r_user in username_password.keys():
             print(f"{r_user}")
         changed_user = input("\nWho would you like "
                         "to assign this task to: ")
+        if changed_user == selected_task['username']:
+            clear_screen()
+            print("\nYou are already assigned to this task"
+                " - no change has been made.\n")
+            display_task(selected_task)
+            editing_menu(selected_task)
         if changed_user in username_password.keys():
             selected_task['username'] = changed_user
             break
@@ -412,23 +479,24 @@ def edit_due_date(selected_task):
         # clear screen
         clear_screen()
         print("\nThis task is already marked as completed and can "
-                "no longer be edited.")
+                "no longer be edited.\n")
         display_task(selected_task)
+        editing_menu(selected_task)
 
     # Loop until user has entered a new due date that is in
     # the correct format and >= today.
     while True:
         try:
-            changed_due_date = input("Please enter a new due date "
+            changed_due_date = input("\nPlease enter a new due date "
                                         "for this task (YYYY-MM-DD): ")
             selected_task['due_date'] = datetime.strptime(
                 changed_due_date, DATETIME_STRING_FORMAT)
         except ValueError:
-            print("Invalid datetime format. Please use the format "
+            print("\nInvalid datetime format. Please use the format "
                     "specified")
             continue
         if selected_task['due_date'].date() < date.today():
-            print("Please set a due date of today or later.")
+            print("\nPlease set a due date of today or later.")
         else:
             break
     # Update tasks.txt with new data, clear screen and display
@@ -436,43 +504,9 @@ def edit_due_date(selected_task):
     update_output()
     clear_screen()
     print("The due date for this task has now been updated "
-            f"to {selected_task['due_date'].date()}.")
-
-
-def editing_menu(selected_task):
-    """Displays a menu to the user and directs to the relevant function
-    allowing the task to be edited. Accepts 1 argument - the task
-    dictionary selected for editing"""
-    # Display editing options to the user.
-    print("\nOptions:\n"
-        "c - mark this task as completed\n"
-        "u - change the assigned user\n"
-        "d - change the due date\n"
-        "r - return to my task list\n"
-        "q - return to the main menu\n")
-    vm_choice = input("Please enter a letter: ")
-
-    if vm_choice.lower() == "c":
-        clear_screen()
-        mark_complete(selected_task)
-
-    elif vm_choice.lower() == "u":
-        edit_assigned_user(selected_task)
-
-    elif vm_choice.lower() == "d":
-        edit_due_date(selected_task)
-
-    elif vm_choice.lower() == "r":
-        # return to current user's task list
-        clear_screen()
-        view_mine()
-    elif vm_choice.lower() == "q":
-        # return to main menu
-        main_menu()
-    else:
-        # redisplay editing_menu
-        print("\nPlease select a valid option.")
-        editing_menu(selected_task)
+            f"to {selected_task['due_date'].date()}.\n")
+    display_task(selected_task)
+    editing_menu(selected_task)
 
 
 def generate_reports():
