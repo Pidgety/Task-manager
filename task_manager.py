@@ -170,7 +170,7 @@ def add_task():
 
     # Loop until 0 < len(task_title) <= 60.
     while True:
-        task_title = input("\nTitle of Task (max 60 characters): ")
+        task_title = input("\nTitle of task (max 60 characters): ")
         if not task_title:
             print("\nPlease enter a title for this task.")
         elif len(task_title) > 60:
@@ -179,7 +179,7 @@ def add_task():
             break
     # add code to check the title is not already in the list for the assigned user
     # if it is, prompt user to choose a different title
-    task_description = input("\nDescription of Task: ")
+    task_description = input("\nDescription of task: ")
 
     # Get the current date.
     curr_date = date.today()
@@ -385,7 +385,6 @@ def view_mine():
             editing_menu(selected_task)
 
         else:
-
             print("\nInvalid choice")
             continue
 
@@ -518,7 +517,12 @@ def edit_due_date(selected_task):
 def generate_reports():
     """Generates two .txt reports: task_overview.txt and 
     user_overview.txt"""
+    generate_task_overview()
+    user_overview()
+    clear_screen()
+    print("\nUser and task overview reports have been generated.\n")
 
+def generate_task_overview():
     # Generate task overview report
     # Calculate task overview report data
     no_tasks = len(task_list)
@@ -530,9 +534,12 @@ def generate_reports():
         if t['completed'] is False and t['due_date'].date() < datetime.today().date():
             no_overdue += 1
     no_incomplete = no_tasks - no_completed
-    # TO DO - if task_list empty, percent_incomplete = "No data message" Else:
-    percent_incomplete = round((no_incomplete / no_tasks  *100), 2)
-    percent_overdue = round((no_overdue / no_tasks * 100), 2)
+    if not task_list:
+        percent_incomplete = 0
+        percent_overdue = 0
+    else:
+        percent_incomplete = round((no_incomplete / no_tasks  *100), 2)
+        percent_overdue = round((no_overdue / no_tasks * 100), 2)
 
     # Write task overview report to output file.
     with open("task_overview.txt", "w", encoding = "utf-8") as t_rpt:
@@ -547,17 +554,27 @@ def generate_reports():
             t_rpt.write(f"\nPercentage of tasks that are incomplete: {percent_incomplete} %")
             t_rpt.write(f"\nPercentage of tasks that are overdue: {percent_overdue} %")
 
-    # Generate user overview report
-    # Calculate data for user overview report
+def user_overview():
+    '''Generate a .txt file containing the following statistics:
+          - total number of registered users
+          - total number of tasks in task_list
+          - for each user:
+            - total number of tasks assigned to that user
+            - percentage of total tasks assigned to that user
+            - percentage of tasks assigned to that user that are completed
+            - percentage of tasks assigned to that user that are incomplete
+            - percentage of tasks assigned to that user that are overdue'''
 
-    # Write user overview report to output file
+    num_tasks = len(task_list)
+    # Write totals section of overview report to output file
     with open("user_overview.txt", "w", encoding = "utf-8") as u_rpt:
         u_rpt.write("User overview\n")
         u_rpt.write(f"\nNumber of registered users: {len(user_data)}")
-        u_rpt.write(f"\nTotal tasks in task list: {no_tasks}\n")
-        # Calculate data for each user
-        # TO DO - REFACTOR AND SIMPLIFY calculations below
-        # FIX bug with Garry showing as having a task
+        u_rpt.write(f"\nTotal tasks in task list: {num_tasks}\n")
+
+        # For each user in username_password:
+        # Loop through tasks in task_list and increment counters
+        # when relevant conditions are met.
         for u in username_password.keys():
             num_user_tasks = 0
             num_comp_tasks = 0
@@ -572,9 +589,10 @@ def generate_reports():
                         num_incomp_tasks += 1
                         if t['due_date'].date() < datetime.today().date():
                             num_overdue_tasks += 1
-            percent_of_total = round(num_user_tasks / no_tasks * 100, 2)
-                    # TO DO - defend against zero division errors in lines below
-                    # if BLAH = 0 u_percent_comp = "N/a"
+            percent_of_total = round(num_user_tasks / num_tasks * 100, 2)
+
+            # If number of a user's assigned tasks == 0, meaning the following
+            # calculations fail, set values to "N/a"
             try:
                 u_percent_comp = round(num_comp_tasks / num_user_tasks * 100, 2)
             except ZeroDivisionError:
@@ -588,15 +606,15 @@ def generate_reports():
             except ZeroDivisionError:
                 u_percent_overdue = "N/a"
 
+            # For each user, in username_password, write the following
+            # data to the output file:
             u_rpt.write(f"\nUser: {u}")
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned: {num_user_tasks}")
-            u_rpt.write(f"\nPercentage of all tasks: {percent_of_total}")
-            u_rpt.write(f"\nPercentage of assigned tasks completed: {u_percent_comp}")
-            u_rpt.write(f"\nPercentage of assigned tasks incomplete: {u_percent_incomp}")
-            u_rpt.write(f"\nPercentage of incomplete tasks overdue: {u_percent_overdue}\n")
-    # clear_screen()
-    print("\nUser and task overview reports have been generated.")
+            u_rpt.write(f"\nPercentage of all tasks: {percent_of_total}%")
+            u_rpt.write(f"\nPercentage of assigned tasks completed: {u_percent_comp}%")
+            u_rpt.write(f"\nPercentage of assigned tasks incomplete: {u_percent_incomp}%")
+            u_rpt.write(f"\nPercentage of incomplete tasks overdue: {u_percent_overdue}%\n")
 
 
 def display_stats():
@@ -624,10 +642,10 @@ def display_stats():
         task_count = len(task_input.readlines())
 
     print("\nUsage statistics:")
-    print("\n-----------------------------------")
+    print("\n------------------------------------")
     print(f"Number of users: \t\t {user_count}")
     print(f"Number of tasks: \t\t {task_count}")
-    print("-----------------------------------\n")
+    print("------------------------------------\n")
 
 
 def update_output():
