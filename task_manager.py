@@ -318,7 +318,7 @@ def view_mine():
 
         print("\n\033[1mView / edit options:\033[0m")
         print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to edit"
-                    if len(user_task_list) > 1 else " 1 - edit that task"}"
+                    if len(user_task_list) > 1 else " 1 - edit the above task"}"
         "\n v - toggle between detailed and summary view"
         "\n-1 - return to the main menu: ")
 
