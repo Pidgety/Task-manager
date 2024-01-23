@@ -477,7 +477,7 @@ def generate_reports():
     """Generates two .txt reports: task_overview.txt and 
     user_overview.txt"""
     generate_task_overview()
-    user_overview()
+    generate_user_overview()
     clear_screen()
     print("\nUser and task overview reports have been generated.\n"
           "They can be found in the current folder and are named:\n" 
@@ -533,7 +533,7 @@ def generate_task_overview():
                     )
 
 
-def user_overview():
+def generate_user_overview():
     '''Generate a .txt file containing the following statistics:
           - total number of registered users
           - total number of tasks in task_list
