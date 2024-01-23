@@ -560,7 +560,7 @@ def user_overview():
                         num_incomp_tasks += 1
                         if t['due_date'].date() < datetime.today().date():
                             num_overdue_tasks += 1
-            percent_of_total = round(num_user_tasks / num_tasks * 100, 2)
+            percent_of_total = round(num_user_tasks / num_tasks * 100, 1)
 
             # If number of a user's assigned tasks == 0, meaning the following
             # calculations fail, set values to "N/a"
@@ -583,9 +583,21 @@ def user_overview():
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
             u_rpt.write(f"\nPercentage of all tasks:\t\t\t\t\t{percent_of_total} %")
-            u_rpt.write(f"\nPercentage of assigned tasks completed:\t\t{"N/a" if u_percent_comp is None else f"{u_percent_comp} %"}")
-            u_rpt.write(f"\nPercentage of assigned tasks incomplete:\t{"N/a" if u_percent_incomp is None else f"{u_percent_incomp} %"}")
-            u_rpt.write(f"\nPercentage of incomplete tasks overdue:\t\t{"N/a" if u_percent_overdue is None else f"{u_percent_overdue} %"}\n")
+            u_rpt.write(
+                        ("\nPercentage of assigned tasks completed:\t\t"
+                        f"{"N/a" if u_percent_comp is None else (
+                        f"{u_percent_comp} %")}")
+                        )
+            u_rpt.write(
+                        ("\nPercentage of assigned tasks incomplete:\t"
+                        f"{"N/a" if u_percent_incomp is None else (
+                        f"{u_percent_incomp} %")}")
+                        )
+            u_rpt.write(
+                        ("\nPercentage of incomplete tasks overdue:\t\t"
+                        f"{"N/a" if u_percent_overdue is None else (
+                        f"{u_percent_overdue} %")}\n")
+                        )
 
 
 def display_stats():
