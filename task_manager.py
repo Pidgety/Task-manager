@@ -275,6 +275,8 @@ def view_mine():
         print(f"\nYou currently have {len(user_task_list)} "
               f"task{"s" if len(user_task_list) > 1 else ""} "
               "assigned to you.")
+        print("\nPlease note that tasks already marked as complete "
+              "can no longer be edited.")
 
         print("\n\033[1mView / edit options:\033[0m")
         print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to edit"
@@ -282,27 +284,27 @@ def view_mine():
         "\n v - toggle between detailed and summary view"
         "\n-1 - return to the main menu: ")
 
-    # Loop through task_list and append user's tasks to user_task_list
-    user_task_list = []
-    for t in task_list:
-        if t['username'] == curr_user:
-            user_task_list.append(t)
-
-    # If user_task_list is empty, inform user and exit function.
-    if not user_task_list:
-        print("You do not have any assigned tasks.\n")
-        return
-
-    # For each task in user_task_list, print a task number and pass
-    # task to display_task()
-    print("\n\033[1mMy tasks (detailed view):\033[0m\n")
-    for i, t in enumerate(user_task_list, start=1):
-        print(f"Task No: {i}")
-        display_task(t)
-    current_view = "detailed"
-    view_mine_options()
-
     while True:
+
+        # Loop through task_list and append user's tasks to user_task_list
+        user_task_list = []
+        for t in task_list:
+            if t['username'] == curr_user:
+                user_task_list.append(t)
+
+        # If user_task_list is empty, inform user and exit function.
+        if not user_task_list:
+            print("** You do not have any assigned tasks. **")
+            return
+
+        # For each task in user_task_list, print a task number and pass
+        # task to display_task()
+        print("\n\033[1mMy tasks (detailed view):\033[0m\n")
+        for i, t in enumerate(user_task_list, start=1):
+            print(f"Task No: {i}")
+            display_task(t)
+        current_view = "detailed"
+        view_mine_options()
 
         user_select = input("\nPlease enter your choice: ")
 
@@ -340,12 +342,22 @@ def view_mine():
             for t in task_list:
                 if t == user_task_list[user_select-1]:
                     selected_task = t
+            # If the selected task is already marked as complete,
+            # inform user that it can no longer be edited.
+            if selected_task["completed"] is True:
+                print("\n** The selected task has already been marked as "
+                      "complete and can no longer be edited. **")
+                input("\nPlease press Enter to return to your list of tasks: ")
+                clear_screen()
+                continue
+
+            # Else, display selected task and editing menu.
             print("\033[1mSelected task:\033[0m\n")
             display_task(selected_task)
             editing_menu(selected_task)
 
         else:
-            print("\nInvalid choice")
+            print("\nInvalid choice")   # write separate validation loop for this?
             continue
 
 # Functions for editing tasks:
@@ -358,10 +370,10 @@ def mark_complete(selected_task):
     # Return to detailed view of selected task.
     if selected_task['completed'] is True:
         clear_screen()
-        print("\nThis task has already been marked as completed "
-              "and can no longer be edited.\n")
+        print("\n** This task has already been marked as completed "
+              "and can no longer be edited. **\n")
         display_task(selected_task)
-        editing_menu(selected_task)
+        editing_menu(selected_task) # Use return here instead
     else:
         # If user confirms choice, mark selected task as complete.
         # Return to summary display.
@@ -377,14 +389,14 @@ def mark_complete(selected_task):
                 print("\nThe selected task has now been marked as completed "
                         "and can no longer be edited.\n")
                 display_task(selected_task)
-                editing_menu(selected_task)
+                editing_menu(selected_task) # Change to return and check it works
 
             elif confirm_complete.lower() == "n":
                 clear_screen()
                 print("\nNo change has been made - the task is "
                         "still active.\n")
                 display_task(selected_task)
-                editing_menu(selected_task)
+                editing_menu(selected_task)  # Change to return and check it works
             else:
                 print("\nPlease select a valid option.")
 
