@@ -39,17 +39,20 @@ def editing_menu(selected_task):
         print("\nOptions:\n"                         # PC - change so that this menu only displays if not marked complete
         "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
         "u - change the assigned user\n"             # PC - that editing isn't possible
-        "d - change the due date\n"
+        "d - change the due date\n"                  # Make above change in view_mine so this menu not accessed.
         "r - return to my task list\n")
-    
+
         vm_choice = input("Please enter a letter: ")
 
+        while vm_choice.lower() not in ["c", "u", "d", "r"]:
+            vm_choice = input("\nPlease enter a valid letter: ")
+
         if vm_choice.lower() == "c":
-            mark_complete(selected_task)
+            mark_complete(selected_task)    # add continue after this line once function amended?
 
         elif vm_choice.lower() == "u":
             clear_screen()
-            edit_assigned_user(selected_task)
+            edit_assigned_user(selected_task) # add continue after this line once function amended
 
         elif vm_choice.lower() == "d":
             edit_due_date(selected_task)
@@ -58,10 +61,7 @@ def editing_menu(selected_task):
         elif vm_choice.lower() == "r":
             # return to current user's task list
             clear_screen()
-            view_mine()                             # Possible to just return to view_mine?
-
-        else:
-            print("\nPlease select a valid option.")  # put this in a separate while loop?
+            view_mine()                       # change to return once code amended
 
 
 # Functions to add users and tasks:
