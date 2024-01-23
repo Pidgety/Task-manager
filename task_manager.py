@@ -279,7 +279,7 @@ def view_mine():
               "can no longer be edited.")
 
         print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to edit"
+        print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to view / edit"
                     if len(user_task_list) > 1 else " 1 - edit the above task"}"
         "\n v - toggle between detailed and summary view"
         "\n-1 - return to the main menu: ")
@@ -337,12 +337,12 @@ def view_mine():
             while user_select < 1 or user_select > len(user_task_list):
                 #user_select = input("\nPlease enter a task number "
                 #f"between 1 and {len(user_task_list)}: ")
-                user_select = input("Please enter 1 to edit your task: " if
-                                    len(user_task_list) == 1 else
-                                    "Please enter a task number beteen 1 and "
-                                    f"{len(user_task_list)}")
-
-                user_select = int(user_select)
+                if len(user_task_list) == 1:
+                    user_select = 1
+                else:
+                    user_select = input("Please enter a task number between 1 and "
+                                    f"{len(user_task_list)}: ")
+                    user_select = int(user_select)
             clear_screen()
             for t in task_list:
                 if t == user_task_list[user_select-1]:
