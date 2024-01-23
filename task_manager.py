@@ -272,17 +272,17 @@ def view_mine():
     the user and calls editing_menu() to provide editing options.'''
 
     def view_mine_options():
-        print(f"\nYou currently have {len(user_task_list)} "
+        print(f"You currently have {len(user_task_list)} "
               f"task{"s" if len(user_task_list) > 1 else ""} "
-              "assigned to you.")
-        print("\nPlease note that tasks already marked as complete "
-              "can no longer be edited.")
+              "assigned to you:")
+        print(f"\n\tActive tasks that can be edited:\t{incomplete_count}")
+        print(f"\tCompleted tasks that cannot be edited:\t{complete_count}")
 
         print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n{f"   - enter a task number (1 to {len(user_task_list)}) to view / edit"
+        print(f"\n{f"\t   - enter a task number (1 to {len(user_task_list)}) to view / edit"
                     if len(user_task_list) > 1 else " 1 - edit the above task"}"
-        "\n v - toggle between detailed and summary view"
-        "\n-1 - return to the main menu: ")
+        "\n\t v - toggle between detailed and summary view"
+        "\n\t-1 - return to the main menu: ")
 
     while True:
 
@@ -311,8 +311,6 @@ def view_mine():
             display_task(t)
         current_view = "detailed"
         view_mine_options()
-
-        print(f"incomplete: {incomplete_count}, complete: {complete_count}") # for testing
 
         user_select = input("\nPlease enter your choice: ")
 
