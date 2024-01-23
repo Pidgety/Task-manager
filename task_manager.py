@@ -299,12 +299,20 @@ def view_mine():
 
         # For each task in user_task_list, print a task number and pass
         # task to display_task()
+        complete_count = 0
+        incomplete_count = 0
         print("\n\033[1mMy tasks (detailed view):\033[0m\n")
         for i, t in enumerate(user_task_list, start=1):
+            if t["completed"]:
+                complete_count += 1
+            else:
+                incomplete_count += 1
             print(f"Task No: {i}")
             display_task(t)
         current_view = "detailed"
         view_mine_options()
+
+        print(f"incomplete: {incomplete_count}, complete: {complete_count}") # for testing
 
         user_select = input("\nPlease enter your choice: ")
 
