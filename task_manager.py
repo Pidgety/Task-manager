@@ -20,54 +20,7 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 # Menu functions:
 
-def main_menu():
-    """Presents the main menu to the user and calls relevant functions
-    depending on user choice"""
-    while True:
-        # presents the menu to the user and converts input to lower case.
-        print()
-        menu = input('''Select one of the following options below:\n
-        r -  Register a user
-        a -  Add a task
-        va - View all tasks
-        vm - View my tasks
-        gr - Generate reports
-        ds - Display statistics
-        e -  Exit
-        : ''').lower()
 
-        if menu == 'r':
-            clear_screen()
-            reg_user()
-
-        elif menu == 'a':
-            clear_screen()
-            add_task()
-
-        elif menu == 'va':
-            clear_screen()
-            view_all()
-
-        elif menu == 'vm':
-            clear_screen()
-            view_mine()
-
-        elif menu == 'gr':
-            clear_screen()
-            generate_reports()
-
-        elif menu == 'ds' and curr_user == 'admin':
-            clear_screen()
-            display_stats()
-
-        elif menu == 'e':
-            clear_screen()
-            print('Thank you for using this task management program.')
-            exit()
-
-        else:
-            clear_screen()
-            print("You have entered an invalid option. Please try again.")
 
 
 def editing_menu(selected_task):
@@ -251,17 +204,21 @@ def view_all():
         change_view = input("\nOptions:\n'v' - toggle detailed / "
                             "summary view\n'q' - return to the "
                             "main menu\n: ")
+
         if change_view.lower() == "v" and current_view == "detailed":
             clear_screen()
             print("\n\033[1mAll tasks (summary view)\033[0m\n")
             summary_view(task_list)
             current_view = "summary"
+
         elif change_view.lower() == "v" and current_view == "summary":
             clear_screen()
             view_all()
+
         elif change_view.lower() == "q":
             clear_screen()
-            main_menu()
+            return
+        
         else:
             print("\nPlease enter a valid letter.")
             continue
@@ -345,9 +302,9 @@ def view_mine():
         if user_select.lower() == "-1":
             # Clear screen and return to main menu.
             clear_screen()
-            main_menu()
+            return
 
-        elif user_select.lower() == "v" and current_view == "detailed":
+        if user_select.lower() == "v" and current_view == "detailed":
             # Switch to summary view of all user's tasks.
             clear_screen()
             print("\n\033[1mMy tasks (summary view):\033[0m\n")
@@ -746,4 +703,49 @@ while not logged_in:
 
 #  MAIN PROGRAM ROUTINE:
 
-main_menu()
+menu = True
+while menu:
+    # presents the menu to the user and converts input to lower case.
+    print("\n\033[1mMain menu:\033[0m\n")
+    menu = input('''Select one of the following options below:\n
+    r -  Register a user
+    a -  Add a task
+    va - View all tasks
+    vm - View my tasks
+    gr - Generate reports
+    ds - Display statistics
+    e -  Exit
+    : ''').lower()
+
+    if menu == 'r':
+        clear_screen()
+        reg_user()
+
+    elif menu == 'a':
+        clear_screen()
+        add_task()
+
+    elif menu == 'va':
+        clear_screen()
+        view_all()
+
+    elif menu == 'vm':
+        clear_screen()
+        view_mine()
+
+    elif menu == 'gr':
+        clear_screen()
+        generate_reports()
+
+    elif menu == 'ds' and curr_user == 'admin':
+        clear_screen()
+        display_stats()
+
+    elif menu == 'e':
+        clear_screen()
+        print('Thank you for using this task management program.')
+        exit()
+
+    else:
+        clear_screen()
+        print("You have entered an invalid option. Please try again.")
