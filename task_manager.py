@@ -76,12 +76,11 @@ def editing_menu(selected_task):
     dictionary selected for editing"""
 
     # Display editing options to the user.
-    print("\nOptions:\n"
-        "c - mark this task as completed\n"
-        "u - change the assigned user\n"
+    print("\nOptions:\n"                             # PC - change so that this menu only displays if not marked complete
+        "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
+        "u - change the assigned user\n"             # PC - that editing isn't possible
         "d - change the due date\n"
-        "r - return to my task list\n"
-        "q - return to the main menu\n")
+        "r - return to my task list\n")
 
     while True:
         vm_choice = input("Please enter a letter: ")
@@ -99,11 +98,8 @@ def editing_menu(selected_task):
         elif vm_choice.lower() == "r":
             # return to current user's task list
             clear_screen()
-            view_mine()
+            view_mine()                             # Possible to just return to view_mine?
 
-        elif vm_choice.lower() == "q":
-            # return to main menu
-            main_menu()
         else:
             print("\nPlease select a valid option.")
 
