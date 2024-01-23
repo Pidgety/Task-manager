@@ -335,8 +335,13 @@ def view_mine():
         elif user_select.isnumeric():
             user_select = int(user_select)
             while user_select < 1 or user_select > len(user_task_list):
-                user_select = input("\nPlease enter a task number "
-                      f"between 1 and {len(user_task_list)}: ")
+                #user_select = input("\nPlease enter a task number "
+                #f"between 1 and {len(user_task_list)}: ")
+                user_select = input("Please enter 1 to edit your task: " if
+                                    len(user_task_list) == 1 else
+                                    "Please enter a task number beteen 1 and "
+                                    f"{len(user_task_list)}")
+
                 user_select = int(user_select)
             clear_screen()
             for t in task_list:
