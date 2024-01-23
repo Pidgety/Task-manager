@@ -503,8 +503,8 @@ def generate_task_overview():
             no_overdue += 1
     no_incomplete = no_tasks - no_completed
     if not task_list:
-        percent_incomplete = "n/a"
-        percent_overdue = "n/a"
+        percent_incomplete = None
+        percent_overdue = None
     else:
         percent_incomplete = round((no_incomplete / no_tasks  *100), 1)
         percent_overdue = round((no_overdue / no_tasks * 100), 1)
@@ -521,8 +521,17 @@ def generate_task_overview():
             t_rpt.write(f"\nNumber of completed tasks:\t\t\t\t\t{no_completed}\n")
             t_rpt.write(f"\nNumber of incomplete tasks:\t\t\t\t\t{no_incomplete}\n")
             t_rpt.write(f"\nNumber of overdue incomplete tasks:\t\t\t{no_overdue}\n")
-            t_rpt.write(f"\nPercentage of tasks that are incomplete:\t{percent_incomplete} %\n")
-            t_rpt.write(f"\nPercentage of tasks that are overdue:\t\t{percent_overdue} %")
+            t_rpt.write(
+                ("\nPercentage of tasks that are incomplete:\t"
+                f"{"N/a" if percent_incomplete is None else (
+                f"{percent_incomplete} %")}\n")
+                    )
+            t_rpt.write(
+                ("\nPercentage of tasks that are overdue:\t\t"
+                f"{"N/a" if percent_overdue is None else (
+                f"{percent_overdue} %")}")
+                    )
+
 
 def user_overview():
     '''Generate a .txt file containing the following statistics:
@@ -582,7 +591,8 @@ def user_overview():
             u_rpt.write(f"\nUser: {u}")
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
-            u_rpt.write(f"\nPercentage of all tasks:\t\t\t\t\t{percent_of_total} %")
+            u_rpt.write("\nPercentage of all tasks:\t\t\t\t\t"
+                        f"{percent_of_total} %")
             u_rpt.write(
                         ("\nPercentage of assigned tasks completed:\t\t"
                         f"{"N/a" if u_percent_comp is None else (
@@ -601,8 +611,8 @@ def user_overview():
 
 
 def display_stats():
-    '''If the user is an admin they can display statistics about number of users
-    and tasks.'''
+    '''If the user is an admin they can display statistics 
+    about number of users and tasks.'''
 
     # Generate tasks.txt and user.txt if they don't already exist
     # because user has not selected to generate them yet
