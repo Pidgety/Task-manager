@@ -1,5 +1,16 @@
-"""This program is a task management tool which allows users to:
-ADD MORE INFO"""
+"""This program is a task management tool which reads data from
+tasks.txt and user.txt and allows users to:
+- register new users
+- add new tasks
+- view all tasks
+- view their own assigned tasks
+- mark own tasks as completed
+- reassign own incomplete tasks to other users
+- edit the due date for own incomplete tasks
+- generate task and user overview statistical reports as .txt files
+- display number of users and tasks (if user is admin)
+All additions and changes are written to tasks.txt or user.txt
+"""
 
 # Notes:
 # 1. Use the following username and password to access the admin rights
@@ -19,9 +30,6 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 # FUNCTIONS
 
 # Menu functions:
-
-
-
 
 def editing_menu(selected_task):
     """Displays a menu to the user and directs to the relevant function
@@ -743,7 +751,7 @@ while menu:
 
     elif menu == 'e':
         clear_screen()
-        print('Thank you for using this task management program.')
+        print("Thank you for using this task management program.\n")
         exit()
 
     else:
