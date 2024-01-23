@@ -34,14 +34,14 @@ def editing_menu(selected_task):
     allowing the task to be edited. Accepts 1 argument - the task
     dictionary selected for editing"""
 
-    # Display editing options to the user.
-    print("\nOptions:\n"                             # PC - change so that this menu only displays if not marked complete
+    while True:
+        # Display editing options to the user.
+        print("\nOptions:\n"                         # PC - change so that this menu only displays if not marked complete
         "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
         "u - change the assigned user\n"             # PC - that editing isn't possible
         "d - change the due date\n"
         "r - return to my task list\n")
-
-    while True:
+    
         vm_choice = input("Please enter a letter: ")
 
         if vm_choice.lower() == "c":
@@ -53,6 +53,7 @@ def editing_menu(selected_task):
 
         elif vm_choice.lower() == "d":
             edit_due_date(selected_task)
+            continue
 
         elif vm_choice.lower() == "r":
             # return to current user's task list
@@ -60,7 +61,7 @@ def editing_menu(selected_task):
             view_mine()                             # Possible to just return to view_mine?
 
         else:
-            print("\nPlease select a valid option.")
+            print("\nPlease select a valid option.")  # put this in a separate while loop?
 
 
 # Functions to add users and tasks:
@@ -445,7 +446,7 @@ def edit_due_date(selected_task):
         print("\nThis task is already marked as completed and can "
                 "no longer be edited.\n")
         display_task(selected_task)
-        editing_menu(selected_task)
+        return
 
     # Loop until user has entered a new due date that is in
     # the correct format and >= today.
@@ -470,7 +471,7 @@ def edit_due_date(selected_task):
     print("The due date for this task has now been updated "
             f"to {selected_task['due_date'].date()}.\n")
     display_task(selected_task)
-    editing_menu(selected_task)
+    return
 
 
 def generate_reports():
