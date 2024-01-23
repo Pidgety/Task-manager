@@ -29,8 +29,6 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 # FUNCTIONS
 
-# Menu functions:
-
 def editing_menu(selected_task):
     """Displays a menu to the user and directs to the relevant function
     allowing the task to be edited. Accepts 1 argument - the task
@@ -481,7 +479,9 @@ def generate_reports():
     generate_task_overview()
     user_overview()
     clear_screen()
-    print("\nUser and task overview reports have been generated.\n")
+    print("\nUser and task overview reports have been generated.\n"
+          "They can be found in the current folder and are named:\n" 
+          "\ttask_overview.txt\n\tuser_overview.txt")
 
 def generate_task_overview():
     '''Generates a .txt file containing the following data:
@@ -503,26 +503,26 @@ def generate_task_overview():
             no_overdue += 1
     no_incomplete = no_tasks - no_completed
     if not task_list:
-        percent_incomplete = 0
-        percent_overdue = 0
+        percent_incomplete = "n/a"
+        percent_overdue = "n/a"
     else:
-        percent_incomplete = round((no_incomplete / no_tasks  *100), 2)
-        percent_overdue = round((no_overdue / no_tasks * 100), 2)
+        percent_incomplete = round((no_incomplete / no_tasks  *100), 1)
+        percent_overdue = round((no_overdue / no_tasks * 100), 1)
 
     # Write task overview report to output file.
     with open("task_overview.txt", "w", encoding = "utf-8") as t_rpt:
-        t_rpt.write("Task overview:\t\t\t\t\tReport generated: "
+        t_rpt.write("Task overview:\t\t\t\t\t\t\t\t\t\t\t\tReport generated: "
                     f"{datetime.strftime(
                         datetime.today(),"%Y-%m-%d %H:%M:%S" )}\n")
         if not task_list:
-            t_rpt.write("No task data has been generated.")
+            t_rpt.write("No task exist so no data has been generated.")
         else:
-            t_rpt.write(f"\nTotal tasks in task list: {no_tasks}")
-            t_rpt.write(f"\nNumber of completed tasks: {no_completed}")
-            t_rpt.write(f"\nNumber of incomplete tasks: {no_incomplete}")
-            t_rpt.write(f"\nNumber of overdue incomplete tasks: {no_overdue}")
-            t_rpt.write(f"\nPercentage of tasks that are incomplete: {percent_incomplete}%")
-            t_rpt.write(f"\nPercentage of tasks that are overdue: {percent_overdue}%")
+            t_rpt.write(f"\nTotal tasks in task list:\t\t\t\t\t{no_tasks}\n")
+            t_rpt.write(f"\nNumber of completed tasks:\t\t\t\t\t{no_completed}\n")
+            t_rpt.write(f"\nNumber of incomplete tasks:\t\t\t\t\t{no_incomplete}\n")
+            t_rpt.write(f"\nNumber of overdue incomplete tasks:\t\t\t{no_overdue}\n")
+            t_rpt.write(f"\nPercentage of tasks that are incomplete:\t{percent_incomplete} %\n")
+            t_rpt.write(f"\nPercentage of tasks that are overdue:\t\t{percent_overdue} %")
 
 def user_overview():
     '''Generate a .txt file containing the following statistics:
