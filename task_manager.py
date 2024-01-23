@@ -567,15 +567,15 @@ def user_overview():
             try:
                 u_percent_comp = round(num_comp_tasks / num_user_tasks * 100, 1)
             except ZeroDivisionError:
-                u_percent_comp = "N/a"
+                u_percent_comp = None
             try:
                 u_percent_incomp = round(num_incomp_tasks / num_user_tasks * 100, 1)
             except ZeroDivisionError:
-                u_percent_incomp = "N/a"
+                u_percent_incomp = None
             try:
                 u_percent_overdue = round(num_overdue_tasks / num_incomp_tasks * 100, 1)
             except ZeroDivisionError:
-                u_percent_overdue = "N/a"
+                u_percent_overdue = None
 
             # For each user, in username_password, write the following
             # data to the output file:
@@ -583,9 +583,9 @@ def user_overview():
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
             u_rpt.write(f"\nPercentage of all tasks:\t\t\t\t\t{percent_of_total} %")
-            u_rpt.write(f"\nPercentage of assigned tasks completed:\t\t{u_percent_comp} %")
-            u_rpt.write(f"\nPercentage of assigned tasks incomplete:\t{u_percent_incomp} %")
-            u_rpt.write(f"\nPercentage of incomplete tasks overdue:\t\t{u_percent_overdue} %\n")
+            u_rpt.write(f"\nPercentage of assigned tasks completed:\t\t{"N/a" if u_percent_comp is None else f"{u_percent_comp} %"}")
+            u_rpt.write(f"\nPercentage of assigned tasks incomplete:\t{"N/a" if u_percent_incomp is None else f"{u_percent_incomp} %"}")
+            u_rpt.write(f"\nPercentage of incomplete tasks overdue:\t\t{"N/a" if u_percent_overdue is None else f"{u_percent_overdue} %"}\n")
 
 
 def display_stats():
