@@ -462,9 +462,9 @@ def edit_assigned_user(selected_task):
     clear_screen()
     print(f"\nAssigned user has been changed to {changed_user}.\n"
           "You can no longer edit this task.\n")
-    input("\nPlease press enter to continue: ")
+    input("\nPlease press Enter to continue: ")
     clear_screen()
-    return True  # check this line works
+    return True
 
 
 def edit_due_date(selected_task):
