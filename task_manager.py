@@ -29,41 +29,6 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 # FUNCTIONS
 
-def editing_menu(selected_task):
-    """Displays a menu to the user and directs to the relevant function
-    allowing the task to be edited. Accepts 1 argument - the task
-    dictionary selected for editing"""
-
-    while True:
-        # Display editing options to the user.
-        print("\nOptions:\n"                         # PC - change so that this menu only displays if not marked complete
-        "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
-        "u - change the assigned user\n"             # PC - that editing isn't possible
-        "d - change the due date\n"                  # Make above change in view_mine so this menu not accessed.
-        "r - return to my task list\n")
-
-        vm_choice = input("Please enter a letter: ")
-
-        while vm_choice.lower() not in ["c", "u", "d", "r"]:
-            vm_choice = input("\nPlease enter a valid letter: ")
-
-        if vm_choice.lower() == "c":
-            mark_complete(selected_task)    # add continue after this line once function amended?
-
-        elif vm_choice.lower() == "u":
-            clear_screen()
-            edit_assigned_user(selected_task) # add continue after this line once function amended
-
-        elif vm_choice.lower() == "d":
-            edit_due_date(selected_task)
-            continue
-
-        elif vm_choice.lower() == "r":
-            # return to current user's task list
-            clear_screen()
-            view_mine()                       # change to return once code amended
-
-
 # Functions to add users and tasks:
 
 def reg_user():
@@ -280,7 +245,7 @@ def view_mine():
 
         print("\n\033[1mView / edit options:\033[0m")
         print(f"\n{f"\t   - enter a task number (1 to {len(user_task_list)}) to view / edit"
-                    if len(user_task_list) > 1 else " 1 - edit the above task"}"
+                    if len(user_task_list) > 1 else "\t 1 - edit the above task"}"
         "\n\t v - toggle between detailed and summary view"
         "\n\t-1 - return to the main menu: ")
 
@@ -331,7 +296,7 @@ def view_mine():
             # Switch to default detailed view by returning to start
             # of current function.
             clear_screen()
-            view_mine()
+            view_mine()  # need to change this to Return
 
             # If input is numeric, cast as Int and check that it is
             # within the range of displayed task numbers.
@@ -366,12 +331,57 @@ def view_mine():
             print("\033[1mSelected task:\033[0m\n")
             display_task(selected_task)
             editing_menu(selected_task)
+            continue
 
         else:
             print("\nInvalid choice")   # write separate validation loop for this?
             continue
 
+
+def editing_menu(selected_task):
+    """Displays a menu to the user and directs to the relevant function
+    allowing the task to be edited. Accepts 1 argument - the task
+    dictionary selected for editing"""
+
+    while True:
+
+        # Display editing options to the user.
+        print("\nOptions:\n"                         # PC - change so that this menu only displays if not marked complete
+        "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
+        "u - change the assigned user\n"             # PC - that editing isn't possible
+        "d - change the due date\n"                  # Make above change in view_mine so this menu not accessed.
+        "r - return to my task list\n")
+
+        vm_choice = input("Please enter a letter: ")
+
+        while vm_choice.lower() not in ["c", "u", "d", "r"]:
+            vm_choice = input("\nPlease enter a valid letter: ")
+
+        if vm_choice.lower() == "c":
+            mark_complete(selected_task)    # add continue after this line once function amended?
+
+        elif vm_choice.lower() == "u":
+            clear_screen()
+            # call function to edit assigned user.
+            exit_editing = edit_assigned_user(selected_task)
+            # check the return value of edit_assigned_user
+            # if True (assigned to a different user) return to view_mine()
+            if exit_editing:
+                return
+            continue
+
+        elif vm_choice.lower() == "d":
+            edit_due_date(selected_task)
+            continue
+
+        elif vm_choice.lower() == "r":
+            # return to current user's task list
+            clear_screen()
+            return
+
+
 # Functions for editing tasks:
+
 
 def mark_complete(selected_task):
     """Marks a selected task as completed, if not already marked as such, 
@@ -420,8 +430,8 @@ def edit_assigned_user(selected_task):
     # redisplay task details and menu.
     if selected_task['completed'] is True:
         clear_screen()
-        print("\nThis task is already marked as completed and can "
-                "no longer be edited.\n")
+        print("\n** This task is already marked as completed and can "
+                "no longer be edited. **\n")
         display_task(selected_task)
         editing_menu(selected_task)
 
@@ -436,8 +446,8 @@ def edit_assigned_user(selected_task):
                         "to assign this task to?\n: ")
         if changed_user == selected_task['username']:
             clear_screen()
-            print("\nYou are already assigned to this task"
-                " - no change has been made.\n")
+            print("\n** You are already assigned to this task"
+                " - no change has been made. **\n")
             display_task(selected_task)
             editing_menu(selected_task)
         if changed_user in username_password.keys():
@@ -454,7 +464,7 @@ def edit_assigned_user(selected_task):
           "You can no longer edit this task.\n")
     input("\nPlease press enter to continue: ")
     clear_screen()
-    view_mine()
+    return True  # check this line works
 
 
 def edit_due_date(selected_task):
