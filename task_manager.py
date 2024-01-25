@@ -717,7 +717,10 @@ def update_output():
 
 def clear_screen():
     """Clears the screen to refresh display"""
-    os.system("cls")
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 # Default file creation:
 
