@@ -156,44 +156,53 @@ def view_all():
     task details to the console. Presents a menu to the user giving the
     option to switch between detailed and summary views of the tasks.'''
 
-    # If task_list is empty, inform user and exit function.
-    if not task_list:
-        print("\nNo tasks have been created yet.\n")
-        return
-
-    # Loop through task_list and call display_task() for each task.
-    print("\n\033[1mAll tasks (detailed view):\033[0m\n")
-    for i, t in enumerate(task_list, start=1):
-        print(f"Task {i}")
-        display_task(t)
-    current_view = "detailed"
-    print(f"Total number of tasks (all users): {len(task_list)}\n")
-
-    # Give user the option to toggle between detailed and summary
-    # lists or to return to the main menu.
     while True:
 
-        change_view = input("\nOptions:\n'v' - toggle detailed / "
-                            "summary view\n'q' - return to the "
-                            "main menu\n: ")
-
-        if change_view.lower() == "v" and current_view == "detailed":
-            clear_screen()
-            print("\n\033[1mAll tasks (summary view)\033[0m\n")
-            summary_view(task_list)
-            current_view = "summary"
-
-        elif change_view.lower() == "v" and current_view == "summary":
-            clear_screen()
-            view_all()
-
-        elif change_view.lower() == "q":
-            clear_screen()
+        # If task_list is empty, inform user and exit function.
+        if not task_list:
+            print("\n** No tasks have been created yet. **\n")
             return
-        
-        else:
-            print("\nPlease enter a valid letter.")
-            continue
+
+        # Loop through task_list and call display_task() for each task.
+        print("\n\033[1mAll tasks (detailed view):\033[0m\n")
+        for i, t in enumerate(task_list, start=1):
+            print(f"Task {i}")
+            display_task(t)
+        current_view = "detailed"
+        print(f"Total number of tasks (all users): {len(task_list)}\n")
+
+        # Give user the option to toggle between detailed and summary
+        # lists or to return to the main menu.
+        while True:
+
+            change_view = input("\nOptions:\n'v' - toggle detailed / "
+                                "summary view\n'q' - return to the "
+                                "main menu\n: ")
+
+            if change_view.lower() not in ["q", "v"]:
+                print("\nPlease enter a valid letter.")
+                continue
+
+            if change_view.lower() == "q":
+                clear_screen()
+                return
+
+                # if user selects summary view, call the summary_view
+                # function and reset current_view to "summary"
+            if change_view.lower() == "v" and current_view == "detailed":
+                clear_screen()
+                print("\n\033[1mAll tasks (summary view)\033[0m\n")
+                summary_view(task_list)
+                current_view = "summary"
+                continue
+
+                # if user selects detailed view, exit this loop and
+                # return to start of view_mine() loop
+            if change_view.lower() == "v" and current_view == "summary":
+                clear_screen()
+                break
+
+        continue
 
 
 def display_task(selected_task):
