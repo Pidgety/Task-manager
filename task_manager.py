@@ -244,8 +244,9 @@ def view_mine():
         print(f"\tCompleted tasks that cannot be edited:\t{complete_count}")
 
         print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n{f"\t   - enter a task number (1 to {len(user_task_list)}) to view / edit"
-                    if len(user_task_list) > 1 else "\t 1 - edit the above task"}"
+        print(f"\n{"\t   - enter the number of an uncompleted task to edit it"
+                    if len(user_task_list) > 1 else
+                    "\t 1 - edit the above task if uncompleted"}"
         "\n\t v - toggle between detailed and summary view"
         "\n\t-1 - return to the main menu: ")
 
@@ -346,10 +347,10 @@ def editing_menu(selected_task):
     while True:
 
         # Display editing options to the user.
-        print("\nOptions:\n"                         # PC - change so that this menu only displays if not marked complete
-        "c - mark this task as completed\n"          # PC - if marked complete - redisplay task with message
-        "u - change the assigned user\n"             # PC - that editing isn't possible
-        "d - change the due date\n"                  # Make above change in view_mine so this menu not accessed.
+        print("\nOptions:\n"
+        "c - mark this task as completed\n"
+        "u - change the assigned user\n"
+        "d - change the due date\n"
         "r - return to my task list\n")
 
         vm_choice = input("Please enter a letter: ")
@@ -358,9 +359,10 @@ def editing_menu(selected_task):
             vm_choice = input("\nPlease enter a valid letter: ")
 
         if vm_choice.lower() == "c":
-            mark_complete(selected_task)    # add continue after this line once function amended?
+            mark_complete(selected_task)
+            continue
 
-        elif vm_choice.lower() == "u":
+        if vm_choice.lower() == "u":
             clear_screen()
             # call function to edit assigned user.
             exit_editing = edit_assigned_user(selected_task)
@@ -370,11 +372,11 @@ def editing_menu(selected_task):
                 return
             continue
 
-        elif vm_choice.lower() == "d":
+        if vm_choice.lower() == "d":
             edit_due_date(selected_task)
             continue
 
-        elif vm_choice.lower() == "r":
+        if vm_choice.lower() == "r":
             # return to current user's task list
             clear_screen()
             return
@@ -394,7 +396,8 @@ def mark_complete(selected_task):
         print("\n** This task has already been marked as completed "
               "and can no longer be edited. **\n")
         display_task(selected_task)
-        editing_menu(selected_task) # Use return here instead
+        return
+        # editing_menu(selected_task) # Use return here instead
     else:
         # If user confirms choice, mark selected task as complete.
         # Return to summary display.
@@ -410,14 +413,14 @@ def mark_complete(selected_task):
                 print("\nThe selected task has now been marked as completed "
                         "and can no longer be edited.\n")
                 display_task(selected_task)
-                editing_menu(selected_task) # Change to return and check it works
+                return # Change to return and check it works
 
             elif confirm_complete.lower() == "n":
                 clear_screen()
                 print("\nNo change has been made - the task is "
                         "still active.\n")
                 display_task(selected_task)
-                editing_menu(selected_task)  # Change to return and check it works
+                return  # Change to return and check it works
             else:
                 print("\nPlease select a valid option.")
 
@@ -433,7 +436,7 @@ def edit_assigned_user(selected_task):
         print("\n** This task is already marked as completed and can "
                 "no longer be edited. **\n")
         display_task(selected_task)
-        editing_menu(selected_task)
+        return
 
     # Display list of registered users and prompt user to enter new
     # assigned user's name until input matches a key in
@@ -449,7 +452,7 @@ def edit_assigned_user(selected_task):
             print("\n** You are already assigned to this task"
                 " - no change has been made. **\n")
             display_task(selected_task)
-            editing_menu(selected_task)
+            return
         if changed_user in username_password.keys():
             selected_task['username'] = changed_user
             break
