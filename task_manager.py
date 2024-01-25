@@ -267,7 +267,8 @@ def view_mine():
             if t['username'] == curr_user:
                 user_task_list.append(t)
 
-        # If user_task_list is empty, inform user and exit function.
+        # If user_task_list is empty, inform user and 
+        # return to main menu.
         if not user_task_list:
             print(f"** You do not have any assigned tasks {curr_user}. **")
             return
@@ -287,9 +288,11 @@ def view_mine():
         current_view = "detailed"
         view_mine_options()
 
-        # NEED INPUT LOOP HERE
+        # Loop until user toggles view back to default detailed list,
+        # chooses to return to main menu or comes back from
+        # editing_menu()
         while True:
-        
+
             user_select = input("\nPlease enter your choice: ")
 
             if user_select.lower() == "-1":
@@ -304,13 +307,13 @@ def view_mine():
                 summary_view(user_task_list)
                 current_view = "summary"
                 view_mine_options()
-                continue    # at the moment, this just carries on, loops again and displays detailed view below
+                continue
 
             if user_select.lower() == "v" and current_view == "summary":
                 # Switch to default detailed view by returning to start
                 # of current function.
                 clear_screen()
-                break  # PC check this works
+                break
 
                 # If input is numeric, cast as Int and check that it is
                 # within the range of displayed task numbers.
@@ -342,12 +345,14 @@ def view_mine():
                     continue
 
                 # Else, display selected task and editing menu.
+                # After viewing / editing, go back to start
+                # of view_mine()
                 print("\033[1mSelected task:\033[0m\n")
                 display_task(selected_task)
                 editing_menu(selected_task)
-                continue
+                break
 
-            print("\nInvalid choice")   # write separate validation loop for this?
+            print("\nInvalid choice")
             continue
 
         continue
