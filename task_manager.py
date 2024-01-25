@@ -98,8 +98,7 @@ def add_task():
             print("\nTitle too long - maximum length is 60 characters.")
         else:
             break
-    # add code to check the title is not already in the list for the assigned user
-    # if it is, prompt user to choose a different title
+
     task_description = input("\nDescription of task: ")
 
     # Get the current date.
@@ -109,9 +108,11 @@ def add_task():
     while True:
         try:
             task_due_date = input("\nDue date of task (YYYY-MM-DD): ")
-            due_date_time = datetime.strptime(task_due_date, DATETIME_STRING_FORMAT)
+            due_date_time = datetime.strptime(task_due_date, 
+                                              DATETIME_STRING_FORMAT)
         except ValueError:
-            print("\nInvalid datetime format. Please use the format specified.")
+            print("\nInvalid datetime format. Please use the format "
+                  "specified.")
             continue
         if due_date_time.date() < curr_date:
             print("\nPlease set a due date of today or later.")
@@ -772,7 +773,8 @@ for user in user_data:
     username_password[username] = password
 
 print("\n\033[1mWelcome to this task management program.\033[0m\n")
-print("If you do not have an account, please ask a registered user to add you.\n")
+print("If you do not have an account, please ask a registered user "
+      "to add you.\n")
 
 logged_in = False
 while not logged_in:
