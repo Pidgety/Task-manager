@@ -32,15 +32,20 @@ DATETIME_STRING_FORMAT = "%Y-%m-%d"
 # Functions to add users and tasks:
 
 def reg_user():
-    '''Add a new user to the user.txt file'''
+    '''Collect user input, verify that it meets conditions and then 
+    write new user data to the user.txt file'''
 
     print("\033[1mRegister a new user\033[0m")
-    # Loop until user enters a username that is not already in the
-    # list of registered users.
-    new_username = input("\nNew Username: ")
+
+    # Verify that new_username meets required conditions.
+    new_username = input("\nNew Username (5 - 15 characters, no spaces): ")
     while True:
         if new_username in username_password.keys():
             new_username = input("\nThat username already exists. Please enter another: ")
+        elif len(new_username) < 5 or len(new_username) > 15:
+            new_username = input("\nPlease enter a username with between 5 and 15 characters: ")
+        elif " " in new_username:
+            new_username = input("\nPlease enter a username that does not contain spaces: ")
         else:
             break
 
@@ -49,8 +54,23 @@ def reg_user():
     # username_password dictionary and write dictionary to
     # users.txt output file.
     while True:
-        new_password = input("\nNew Password: ")
-        confirm_password = input("Confirm Password: ")
+
+        # Verify that password meets required conditions.
+        new_password = input("\nNew Password (8 - 20 characters, no spaces): ")
+        while True:
+            if len(new_password) < 8 or len(new_password) > 20:
+                new_password = input("\nPlease enter a password with between "
+                                     "8 and 20 characters: ")
+            elif " " in new_password:
+                new_password = input("\nPlease enter a password that does "
+                                     "not contain spaces: ")
+            elif new_password == new_username:
+                new_password = input("\nPlease enter a password that is "
+                                     "different from your username: ")
+            else:
+                break
+
+        confirm_password = input("\nConfirm Password: ")
 
         if new_password == confirm_password:
             username_password[new_username] = new_password
