@@ -170,7 +170,7 @@ def view_all():
             print(f"Task {i}")
             display_task(t)
         current_view = "detailed"
-        print(f"Total number of tasks (all users): {len(task_list)}\n")
+        print(f"Total number of tasks (all users): {len(task_list)}")
 
         # Give user the option to toggle between detailed and summary
         # lists or to return to the main menu.
@@ -236,7 +236,7 @@ def summary_view(list_name):
                            "yes" if t['completed'] is True else "no", 
                            t['due_date'].strftime(DATETIME_STRING_FORMAT)])
     print(tabulate(table_data,
-                   headers=["No.", "Task", "Completed?", "Due date"]))
+                   headers=["No.", "Task", "Completed?", "Due date"]) + "\n\n")
 
 
 def view_mine():
@@ -247,18 +247,14 @@ def view_mine():
     the user and calls editing_menu() to provide editing options.'''
 
     def view_mine_options():
-        print(f"\nYou currently have {len(user_task_list)} "
-              f"task{"s" if len(user_task_list) > 1 else ""} "
-              "assigned to you:")
-        print(f"\n\tActive tasks that can be edited:\t{incomplete_count}")
-        print(f"\tCompleted tasks that cannot be edited:\t{complete_count}")
 
-        print("\n\033[1mView / edit options:\033[0m")
-        print(f"\n{"\t   - enter the number of an uncompleted task to edit it"
+        print("\033[1mView / edit options:\033[0m\n")
+        print("\n   - enter the number of an uncompleted task to edit "
+                   f"({incomplete_count} remaining of {len(user_task_list)} assigned tasks)"
                     if len(user_task_list) > 1 else
-                    "\t 1 - edit the above task if not marked as completed"}"
-        "\n\t v - toggle between detailed and summary view"
-        "\n\t-1 - return to the main menu: ")
+                   " 1 - edit the above task if not marked as completed")
+        print("\n v - toggle between detailed and summary view")
+        print("\n-1 - return to the main menu: ")
 
     while True:
 
