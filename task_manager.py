@@ -391,6 +391,10 @@ def editing_menu(selected_task):
 
     while True:
 
+        # If task has been marked as complete, return to view_mine()
+        if selected_task['completed'] is True:
+            return
+
         # Display editing options to the user.
         print("\nOptions:\n"
         "c - mark this task as completed\n"
@@ -435,15 +439,6 @@ def mark_complete(selected_task):
     """Marks a selected task as completed, if not already marked as such,
     and calls the update_output function to update the output file."""
 
-    # Inform user if the task has already been marked as complete.
-    # Redisplay selected task and exit function.
-    if selected_task['completed'] is True:
-        clear_screen()
-        print("\n** This task has already been marked as completed "
-              "and can no longer be edited. **\n")
-        input("\nPlease press enter to return to your list of tasks: ")
-        return
-
     # If user confirms choice, mark selected task as complete.
     # Inform user whether change has been made, redisplay task
     # and exit function.
@@ -459,7 +454,8 @@ def mark_complete(selected_task):
             clear_screen()
             print("\nThe selected task has now been marked as completed "
                     "and can no longer be edited.\n")
-            display_task(selected_task)
+            input("Please press Enter to return to your list of tasks: ")
+            clear_screen()
             return
 
         if confirm_complete.lower() == "n":
@@ -477,16 +473,6 @@ def edit_assigned_user(selected_task):
     user. Takes one argument - the selected task dictionary.
     Returns True to allow code in editing_menu() to return the user
     directly to view_mine()'''
-
-    # If selected task already marked as compete, inform user and
-    # redisplay task details and menu.
-    if selected_task['completed'] is True:
-        clear_screen()
-        print("\n** This task is already marked as completed and can "
-                "no longer be edited. **\n")
-        display_task(selected_task)
-        input("\nPlease press Enter to return to your list of tasks: ")
-        return True
 
     # Display list of registered users and prompt user to enter new
     # assigned user's name until input matches a key in
@@ -531,15 +517,6 @@ def edit_due_date(selected_task):
     Checks new due date is valid and calls update_output() to
     write changes to the tasks.txt output file. Accepts 1 argument -
     the task dictionary to be edited."""
-
-    # Inform user if the task is already marked as completed and
-    # cannot be edited. Redisplay task and exit function.
-    if selected_task['completed'] is True:
-        clear_screen()
-        print("\n** This task is already marked as completed and can "
-                "no longer be edited. **\n")
-        input("\nPlease press Enter to return to your list of tasks: ")
-        return
 
     # Loop until user has entered a new due date that is in
     # the correct format and >= today.
