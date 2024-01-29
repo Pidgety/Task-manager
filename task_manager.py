@@ -199,8 +199,8 @@ def view_all():
         # list views or to return to the main menu.
         while True:
 
-            change_view = input("\nOptions:\n'v' - toggle detailed / "
-                                "summary view\n'q' - return to the "
+            change_view = input("\nOptions:\nv - toggle detailed / "
+                                "summary view\nq - return to the "
                                 "main menu\n: ")
 
             if change_view.lower() not in ["q", "v"]:
@@ -272,14 +272,14 @@ def view_mine():
 
     def view_mine_options():
         """Displays view / edit options to user"""
-        print("\033[1mView / edit options:\033[0m\n")
+        print("\033[1mView / edit options:\033[0m")
         print("\n   - enter the number of an uncompleted task to edit "
                    f"({incomplete_count} remaining of "
                    f"{len(user_task_list)} assigned tasks)"
                     if len(user_task_list) > 1 else
                    " 1 - edit the above task if not marked as completed")
-        print("\n v - toggle between detailed and summary view")
-        print("\n-1 - return to the main menu: ")
+        print(" v - toggle between detailed and summary view")
+        print("-1 - return to the main menu: ")
 
     while True:
 
@@ -368,7 +368,7 @@ def view_mine():
                     input("\nPlease press Enter to return to your list of "
                           "tasks: ")
                     clear_screen()
-                    continue
+                    break
 
                 # Else, display selected task and editing menu.
                 print("\033[1mSelected task:\033[0m\n")
@@ -441,7 +441,7 @@ def mark_complete(selected_task):
         clear_screen()
         print("\n** This task has already been marked as completed "
               "and can no longer be edited. **\n")
-        display_task(selected_task)
+        input("\nPlease press enter to return to your list of tasks: ")
         return
 
     # If user confirms choice, mark selected task as complete.
@@ -485,6 +485,7 @@ def edit_assigned_user(selected_task):
         print("\n** This task is already marked as completed and can "
                 "no longer be edited. **\n")
         display_task(selected_task)
+        input("\nPlease press Enter to return to your list of tasks: ")
         return True
 
     # Display list of registered users and prompt user to enter new
@@ -535,9 +536,9 @@ def edit_due_date(selected_task):
     # cannot be edited. Redisplay task and exit function.
     if selected_task['completed'] is True:
         clear_screen()
-        print("\nThis task is already marked as completed and can "
-                "no longer be edited.\n")
-        display_task(selected_task)
+        print("\n** This task is already marked as completed and can "
+                "no longer be edited. **\n")
+        input("\nPlease press Enter to return to your list of tasks: ")
         return
 
     # Loop until user has entered a new due date that is in
@@ -888,8 +889,9 @@ while menu:
             clear_screen()
             display_stats()
         else:
-            print("\nSorry, only the Admin user is able to display "
-                  "this report.")
+            clear_screen()
+            print("\n** Sorry, only the Admin user is able to display "
+                  "this report. **")
 
     elif menu == 'e':
         clear_screen()
