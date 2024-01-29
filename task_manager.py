@@ -589,7 +589,7 @@ def generate_task_overview():
                     f"{datetime.strftime(
                         datetime.today(),"%Y-%m-%d %H:%M:%S" )}\n")
         if not task_list:
-            t_rpt.write("No task exist so no data has been generated.")
+            t_rpt.write("\nNo tasks exist so no data has been generated.")
         else:
             t_rpt.write("\nTotal tasks in task list:\t\t\t\t\t"
                         f"{no_tasks}\n")
@@ -647,7 +647,10 @@ def generate_user_overview():
                         num_incomp_tasks += 1
                         if t['due_date'].date() < datetime.today().date():
                             num_overdue_tasks += 1
-            percent_of_total = round(num_user_tasks / num_tasks * 100, 1)
+            if not task_list:
+                percent_of_total = None
+            else:
+                percent_of_total = round(num_user_tasks / num_tasks * 100, 1)
 
             # If number of a user's assigned tasks == 0, meaning the
             # following calculations fail, set values to None.
@@ -676,8 +679,11 @@ def generate_user_overview():
             u_rpt.write(f"\nUser: {u}")
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
-            u_rpt.write("\nPercentage of all tasks:\t\t\t\t\t"
-                        f"{percent_of_total} %")
+            u_rpt.write(
+                        ("\nPercentage of all tasks:\t\t\t\t\t"
+                        f"{"N/a" if percent_of_total is None else (
+                        f"{percent_of_total} %")}")
+                        )
             u_rpt.write(
                         ("\nPercentage of assigned tasks completed:\t\t"
                         f"{"N/a" if u_percent_comp is None else (
