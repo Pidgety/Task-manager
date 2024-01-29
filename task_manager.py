@@ -530,9 +530,10 @@ def edit_due_date(selected_task):
     Checks new due date is valid and calls update_output() to
     write changes to the tasks.txt output file. Accepts 1 argument -
     the task dictionary to be edited."""
-    # Allow user to change the due date.
+
+    # Inform user if the task is already marked as completed and
+    # cannot be edited. Redisplay task and exit function.
     if selected_task['completed'] is True:
-        # clear screen
         clear_screen()
         print("\nThis task is already marked as completed and can "
                 "no longer be edited.\n")
@@ -551,10 +552,12 @@ def edit_due_date(selected_task):
             print("\nInvalid datetime format. Please use the format "
                     "specified")
             continue
+
         if selected_task['due_date'].date() < date.today():
             print("\nPlease set a due date of today or later.")
         else:
             break
+
     # Update tasks.txt with new data, clear screen and display
     # confirmation of the change made to due date.
     update_output()
@@ -584,14 +587,15 @@ def generate_task_overview():
        - percentage of tasks that are incomplete
        - percentage of tasks that are overdue'''
 
-    # Calculate task overview report data
+    # Calculate task overview report data.
     no_tasks = len(task_list)
     no_completed = 0
     no_overdue = 0
     for t in task_list:
         if t['completed'] is True:
             no_completed += 1
-        if t['completed'] is False and t['due_date'].date() < datetime.today().date():
+        if t['completed'] is False and (t['due_date'].date() <
+                                        datetime.today().date()):
             no_overdue += 1
     no_incomplete = no_tasks - no_completed
     if not task_list:
@@ -609,10 +613,14 @@ def generate_task_overview():
         if not task_list:
             t_rpt.write("No task exist so no data has been generated.")
         else:
-            t_rpt.write(f"\nTotal tasks in task list:\t\t\t\t\t{no_tasks}\n")
-            t_rpt.write(f"\nNumber of completed tasks:\t\t\t\t\t{no_completed}\n")
-            t_rpt.write(f"\nNumber of incomplete tasks:\t\t\t\t\t{no_incomplete}\n")
-            t_rpt.write(f"\nNumber of overdue incomplete tasks:\t\t\t{no_overdue}\n")
+            t_rpt.write("\nTotal tasks in task list:\t\t\t\t\t"
+                        f"{no_tasks}\n")
+            t_rpt.write("\nNumber of completed tasks:\t\t\t\t\t"
+                        f"{no_completed}\n")
+            t_rpt.write("\nNumber of incomplete tasks:\t\t\t\t\t"
+                        f"{no_incomplete}\n")
+            t_rpt.write("\nNumber of overdue incomplete tasks:\t\t\t"
+                        f"{no_overdue}\n")
             t_rpt.write(
                 ("\nPercentage of tasks that are incomplete:\t"
                 f"{"N/a" if percent_incomplete is None else (
@@ -626,21 +634,21 @@ def generate_task_overview():
 
 
 def generate_user_overview():
-    '''Generate a .txt file containing the following statistics:
+    '''Generates a .txt file containing the following statistics:
           - total number of registered users
           - total number of tasks in task_list
           - for each user:
-            - total number of tasks assigned to that user
-            - percentage of total tasks assigned to that user
-            - percentage of tasks assigned to that user that are completed
-            - percentage of tasks assigned to that user that are incomplete
-            - percentage of tasks assigned to that user that are overdue'''
+            - total number of tasks assigned to them
+            - percentage of total tasks assigned to them
+            - percentage of their assigned tasks that are completed
+            - percentage of their assigned tasks that are incomplete
+            - percentage of their assigned tasks that are overdue'''
 
     num_tasks = len(task_list)
     # Write totals section of overview report to output file
     with open("user_overview.txt", "w", encoding = "utf-8") as u_rpt:
         u_rpt.write("User overview:\t\t\t\t\t\t\t\t\t\t\t\tReport generated: "
-                    f"{datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S")}\n")
+            f"{datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S")}\n")
         u_rpt.write(f"\nNumber of registered users:\t\t{len(user_data)}")
         u_rpt.write(f"\nTotal tasks in task list:\t\t{num_tasks}\n")
 
@@ -663,23 +671,30 @@ def generate_user_overview():
                             num_overdue_tasks += 1
             percent_of_total = round(num_user_tasks / num_tasks * 100, 1)
 
-            # If number of a user's assigned tasks == 0, meaning the following
-            # calculations fail, set values to "N/a"
+            # If number of a user's assigned tasks == 0, meaning the
+            # following calculations fail, set values to None.
             try:
-                u_percent_comp = round(num_comp_tasks / num_user_tasks * 100, 1)
+                u_percent_comp = round(
+                    num_comp_tasks / num_user_tasks * 100, 1
+                    )
             except ZeroDivisionError:
                 u_percent_comp = None
             try:
-                u_percent_incomp = round(num_incomp_tasks / num_user_tasks * 100, 1)
+                u_percent_incomp = round(
+                    num_incomp_tasks / num_user_tasks * 100, 1
+                    )
             except ZeroDivisionError:
                 u_percent_incomp = None
             try:
-                u_percent_overdue = round(num_overdue_tasks / num_incomp_tasks * 100, 1)
+                u_percent_overdue = round(
+                    num_overdue_tasks / num_incomp_tasks * 100, 1
+                    )
             except ZeroDivisionError:
                 u_percent_overdue = None
 
-            # For each user, in username_password, write the following
-            # data to the output file:
+            # For each user in username_password, write the following
+            # data to the output file.  Show "N/a" where zero sum
+            # division errors above meant values were set to None.
             u_rpt.write(f"\nUser: {u}")
             u_rpt.write("\n-------------------")
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
@@ -703,11 +718,11 @@ def generate_user_overview():
 
 
 def display_stats():
-    '''If the user is an admin they can display statistics 
-    about number of users and tasks.'''
+    '''Allows the admin user to display statistics 
+    about number of users and tasks, generated from user.txt and
+    tasks.txt.'''
 
-    # Generate tasks.txt and user.txt if they don't already exist
-    # because user has not selected to generate them yet
+    # Generate tasks.txt and user.txt if they don't already exist.
 
     if not os.path.exists("user.txt"):
         with open("user.txt", "w", encoding="utf-8") as user_input:
@@ -718,7 +733,7 @@ def display_stats():
             pass
 
     # Generate the info below from tasks.txt and user.txt
-    # call the code to generate the txt files
+    # call the code to generate the txt files.
 
     with open("user.txt", "r", encoding="utf-8") as user_input:
         user_count = len(user_input.readlines())
@@ -736,6 +751,7 @@ def display_stats():
 def update_output():
     """Updates the tasks.txt output file with strings generated from
     tasks in task_list"""
+
     task_file = open("tasks.txt", "w", encoding="utf-8")
     task_list_to_write = []
     for t in task_list:
@@ -751,14 +767,16 @@ def update_output():
     task_file.write("\n".join(task_list_to_write))
     task_file.close()
 
+
 def clear_screen():
-    """Clears the screen to refresh display"""
+    """Clears the screen to refresh the display"""
     if os.name == "nt":
         os.system("cls")
     else:
         os.system("clear")
 
-# Default file creation:
+
+# ==== Start of program ====
 
 # Create tasks.txt if it doesn't exist
 if not os.path.exists("tasks.txt"):
@@ -780,18 +798,20 @@ for t_str in task_data:
     curr_t['username'] = task_components[0]
     curr_t['title'] = task_components[1]
     curr_t['description'] = task_components[2]
-    curr_t['due_date'] = datetime.strptime(task_components[3], DATETIME_STRING_FORMAT)
-    curr_t['assigned_date'] = datetime.strptime(task_components[4], DATETIME_STRING_FORMAT)
+    curr_t['due_date'] = datetime.strptime(task_components[3],
+                                           DATETIME_STRING_FORMAT)
+    curr_t['assigned_date'] = datetime.strptime(task_components[4],
+                                                DATETIME_STRING_FORMAT)
     curr_t['completed'] = True if task_components[5] == "Yes" else False
 
     task_list.append(curr_t)
 
+# ====Login Section====
 
-#====Login Section====
 # Read usernames and passwords from user.txt and store values in
 # username_password dictionary.
 
-# If no user.txt file exists, write one with a default account
+# If no user.txt file exists, write one with a default account.
 if not os.path.exists("user.txt"):
     with open("user.txt", "w", encoding="utf-8") as default_file:
         default_file.write("admin;password")
@@ -827,7 +847,7 @@ while not logged_in:
     print("Login successful!")
     logged_in = True
 
-#  MAIN PROGRAM ROUTINE:
+# ==== MAIN PROGRAM ROUTINE ====
 
 menu = True
 while menu:
@@ -839,7 +859,7 @@ while menu:
     va - View all tasks
     vm - View my tasks
     gr - Generate reports
-    ds - Display statistics
+    ds - Display statistics (admin only)
     e -  Exit
     : ''').lower()
 
@@ -863,9 +883,13 @@ while menu:
         clear_screen()
         generate_reports()
 
-    elif menu == 'ds' and curr_user == 'admin':
-        clear_screen()
-        display_stats()
+    elif menu == 'ds':
+        if curr_user == 'admin':
+            clear_screen()
+            display_stats()
+        else:
+            print("\nSorry, only the Admin user is able to display "
+                  "this report.")
 
     elif menu == 'e':
         clear_screen()
@@ -874,4 +898,4 @@ while menu:
 
     else:
         clear_screen()
-        print("You have entered an invalid option. Please try again.")
+        print("\nYou have entered an invalid option. Please try again.")
