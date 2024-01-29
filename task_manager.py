@@ -344,12 +344,13 @@ def view_mine():
             if user_select.isnumeric():
                 user_select = int(user_select)
                 while user_select < 1 or user_select > len(user_task_list):
-                    # if user only has one task, and user enters a number
-                    # select it by default.
+                    # if user only has one task and enters a 
+                    # number, select it by default.
                     if len(user_task_list) == 1:
                         user_select = 1
                     else:
-                        user_select = input("Please enter a task number between 1 and "
+                        user_select = input("Please enter a task number "
+                                            "between 1 and "
                                         f"{len(user_task_list)}: ")
                         user_select = int(user_select)
                 clear_screen()
@@ -411,7 +412,8 @@ def editing_menu(selected_task):
             # call function to edit assigned user.
             exit_editing = edit_assigned_user(selected_task)
             # check the return value of edit_assigned_user
-            # if True (assigned to a different user) return to view_mine()
+            # if True (assigned to a different user) return to
+            # view_mine()
             if exit_editing:
                 return
             continue
@@ -430,48 +432,51 @@ def editing_menu(selected_task):
 
 
 def mark_complete(selected_task):
-    """Marks a selected task as completed, if not already marked as such, 
+    """Marks a selected task as completed, if not already marked as such,
     and calls the update_output function to update the output file."""
 
     # Inform user if the task has already been marked as complete.
-    # Return to detailed view of selected task.
+    # Redisplay selected task and exit function.
     if selected_task['completed'] is True:
         clear_screen()
         print("\n** This task has already been marked as completed "
               "and can no longer be edited. **\n")
         display_task(selected_task)
         return
-        # editing_menu(selected_task) # Use return here instead
-    else:
-        # If user confirms choice, mark selected task as complete.
-        # Return to summary display.
-        print("\nPlease note: once marked as completed, the selected task "
-            "can no longer be edited.")
-        while True:
-            confirm_complete = input("\nPlease type 'y' to confirm task "
-                                    "completion or 'n' to go back: ")
-            if confirm_complete.lower() == "y":
-                selected_task['completed'] = True
-                update_output()
-                clear_screen()
-                print("\nThe selected task has now been marked as completed "
-                        "and can no longer be edited.\n")
-                display_task(selected_task)
-                return # Change to return and check it works
 
-            elif confirm_complete.lower() == "n":
-                clear_screen()
-                print("\nNo change has been made - the task is "
-                        "still active.\n")
-                display_task(selected_task)
-                return  # Change to return and check it works
-            else:
-                print("\nPlease select a valid option.")
+    # If user confirms choice, mark selected task as complete.
+    # Inform user whether change has been made, redisplay task
+    # and exit function.
+    print("\nPlease note: once marked as completed, the selected task "
+        "can no longer be edited.")
+    while True:
+        confirm_complete = input("\nPlease type 'y' to confirm task "
+                                "completion or 'n' to go back: ")
+
+        if confirm_complete.lower() == "y":
+            selected_task['completed'] = True
+            update_output()
+            clear_screen()
+            print("\nThe selected task has now been marked as completed "
+                    "and can no longer be edited.\n")
+            display_task(selected_task)
+            return
+
+        if confirm_complete.lower() == "n":
+            clear_screen()
+            print("\nNo change has been made - the task is "
+                    "still active.\n")
+            display_task(selected_task)
+            return
+
+        print("\nPlease select a valid option.")
 
 
 def edit_assigned_user(selected_task):
     '''Allow user to reassign an uncompleted task to a different
-    user. Takes one argument - the selected task dictionary.'''
+    user. Takes one argument - the selected task dictionary.
+    Returns True to allow code in editing_menu() to return the user
+    directly to view_mine()'''
 
     # If selected task already marked as compete, inform user and
     # redisplay task details and menu.
@@ -480,7 +485,7 @@ def edit_assigned_user(selected_task):
         print("\n** This task is already marked as completed and can "
                 "no longer be edited. **\n")
         display_task(selected_task)
-        return
+        return True
 
     # Display list of registered users and prompt user to enter new
     # assigned user's name until input matches a key in
@@ -491,12 +496,18 @@ def edit_assigned_user(selected_task):
             print(f"{r_user}")
         changed_user = input("\nWho would you like "
                         "to assign this task to?\n: ")
+
+        # If user attempts to reassign to self, inform them and return
+        # to editing_menu()
         if changed_user == selected_task['username']:
             clear_screen()
             print("\n** You are already assigned to this task"
                 " - no change has been made. **\n")
             display_task(selected_task)
-            return
+            return False
+
+        # If input user name is a registered user, change the
+        # username value in the selected task dictionary.
         if changed_user in username_password.keys():
             selected_task['username'] = changed_user
             break
