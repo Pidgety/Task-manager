@@ -16,8 +16,9 @@ All additions and changes are written to tasks.txt or user.txt
 # 1. Use the following username and password to access the admin rights
 # username: admin
 # password: password
-# 2. Ensure you open the whole folder for this task in VS Code otherwise the
-# program will look in your root directory for the text files.
+# 2. Ensure you open the whole folder for this task in VS Code
+# otherwise the program will look in your root directory for the
+# text files.
 
 
 #=====importing libraries===========
@@ -37,26 +38,25 @@ def reg_user():
 
     print("\033[1mRegister a new user\033[0m")
 
-    # Verify that new_username meets required conditions.
+    # Loop until new_username meets required conditions.
     new_username = input("\nNew Username (5 - 15 characters, no spaces): ")
     while True:
         if new_username in username_password.keys():
-            new_username = input("\nThat username already exists. Please enter another: ")
+            new_username = input("\nThat username already exists. "
+                                 "Please enter another: ")
         elif len(new_username) < 5 or len(new_username) > 15:
-            new_username = input("\nPlease enter a username with between 5 and 15 characters: ")
+            new_username = input("\nPlease enter a username with between "
+                                 "5 and 15 characters: ")
         elif " " in new_username:
-            new_username = input("\nPlease enter a username that does not contain spaces: ")
+            new_username = input("\nPlease enter a username that does not "
+                                 "contain spaces: ")
         else:
             break
 
-    # Loop until new_password and confirm_password match.
-    # When they match, add new_username and new_password to
-    # username_password dictionary and write dictionary to
-    # users.txt output file.
+    # Loop until new_password meets required conditions.
     while True:
-
-        # Verify that password meets required conditions.
-        new_password = input("\nNew Password (8 - 20 characters, no spaces): ")
+        new_password = input("\nNew Password (8 - 20 characters, "
+                             "no spaces): ")
         while True:
             if len(new_password) < 8 or len(new_password) > 20:
                 new_password = input("\nPlease enter a password with between "
@@ -72,6 +72,8 @@ def reg_user():
 
         confirm_password = input("\nConfirm Password: ")
 
+        # When confirm_password matches new_password, write username
+        # and password to user.txt, else return to start of loop.
         if new_password == confirm_password:
             username_password[new_username] = new_password
             clear_screen()
@@ -89,7 +91,7 @@ def reg_user():
 def add_task():
     '''Allow user to add a new task to task.txt file
     Prompt user for the following: 
-        - the user to assign the task to,
+        - the name of the user to assign the task to,
         - the title of the task,
         - the description of the task and 
         - the due date of the task.'''
@@ -97,7 +99,8 @@ def add_task():
     print("\033[1mAdd a task\033[0m")
 
     # Loop until user enters the username of a registered user.
-    # If not registered, display a list of registered users.
+    # If not registered, display a list of registered users
+    # and reprompt.
     while True:
         task_username = input("\nUser to be assigned to the task: ")
         if task_username not in username_password.keys():
@@ -141,7 +144,7 @@ def add_task():
 
     # Add input values to a new_task dictionary and append to task_list
     # Loop through task_list and create list of ';'- separated strings.
-    # Write the data to task.txt with each task on a new line.
+    # Write the data to task.txt, with each task on a new line.
     new_task = {
         "username": task_username,
         "title": task_title,
@@ -172,7 +175,7 @@ def add_task():
 # Functions to view tasks:
 
 def view_all():
-    '''Reads the task from the task list generated from task.txt file 
+    '''Reads the tasks from the task list generated from task.txt file
     and, for each task, calls the function display_task() to display
     task details to the console. Presents a menu to the user giving the
     option to switch between detailed and summary views of the tasks.'''
@@ -193,7 +196,7 @@ def view_all():
         print(f"Total number of tasks (all users): {len(task_list)}")
 
         # Give user the option to toggle between detailed and summary
-        # lists or to return to the main menu.
+        # list views or to return to the main menu.
         while True:
 
             change_view = input("\nOptions:\n'v' - toggle detailed / "
@@ -218,7 +221,8 @@ def view_all():
                 continue
 
                 # if user selects detailed view, exit this loop and
-                # return to start of view_mine() loop
+                # return to start of view_mine() loop with default
+                # detailed view.
             if change_view.lower() == "v" and current_view == "summary":
                 clear_screen()
                 break
@@ -227,7 +231,7 @@ def view_all():
 
 
 def display_task(selected_task):
-    """Displays the details of the selected task passed as an argument"""
+    """Displays the details of a selected task passed as an argument"""
 
     disp_str = ("-------------------------------------------------------------"
                 "----------------\n")
@@ -237,7 +241,8 @@ def display_task(selected_task):
         DATETIME_STRING_FORMAT)}\n"
     disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
         DATETIME_STRING_FORMAT)}\n"
-    disp_str += f"Task complete? \t {"Yes" if selected_task['completed'] else "No"}\n"
+    disp_str += f"Task complete? \t {"Yes" if (
+        selected_task['completed']) else "No"}\n"
     disp_str += f"Task Description: \n {selected_task['description']}\n"
     disp_str += ("-------------------------------------------------------------"
                  "----------------\n")
