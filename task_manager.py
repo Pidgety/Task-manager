@@ -131,7 +131,7 @@ def add_task():
     while True:
         try:
             task_due_date = input("\nDue date of task (YYYY-MM-DD): ")
-            due_date_time = datetime.strptime(task_due_date, 
+            due_date_time = datetime.strptime(task_due_date,
                                               DATETIME_STRING_FORMAT)
         except ValueError:
             print("\nInvalid datetime format. Please use the format "
@@ -344,7 +344,7 @@ def view_mine():
             if user_select.isnumeric():
                 user_select = int(user_select)
                 while user_select < 1 or user_select > len(user_task_list):
-                    # if user only has one task and enters a 
+                    # if user only has one task and enters a
                     # number, select it by default.
                     if len(user_task_list) == 1:
                         user_select = 1
