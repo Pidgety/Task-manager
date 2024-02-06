@@ -241,8 +241,8 @@ def display_task(selected_task):
         DATETIME_STRING_FORMAT)}\n"
     disp_str += f"Due Date: \t {selected_task['due_date'].strftime(
         DATETIME_STRING_FORMAT)}\n"
-    disp_str += f"Task complete? \t {"Yes" if (
-        selected_task['completed']) else "No"}\n"
+    disp_str += f"Task complete? \t {'Yes' if (
+        selected_task['completed']) else 'No'}\n"
     disp_str += f"Task Description: \n {selected_task['description']}\n"
     disp_str += ("-------------------------------------------------------------"
                  "----------------\n")
@@ -587,7 +587,7 @@ def generate_task_overview():
     with open("task_overview.txt", "w", encoding = "utf-8") as t_rpt:
         t_rpt.write("Task overview:\t\t\t\t\t\t\t\t\t\t\t\tReport generated: "
                     f"{datetime.strftime(
-                        datetime.today(),"%Y-%m-%d %H:%M:%S" )}\n")
+                        datetime.today(),'%Y-%m-%d %H:%M:%S' )}\n")
         if not task_list:
             t_rpt.write("\nNo tasks exist so no data has been generated.")
         else:
@@ -601,13 +601,13 @@ def generate_task_overview():
                         f"{no_overdue}\n")
             t_rpt.write(
                 ("\nPercentage of tasks that are incomplete:\t"
-                f"{"N/a" if percent_incomplete is None else (
-                f"{percent_incomplete} %")}\n")
+                f"{'N/a' if percent_incomplete is None else (
+                f'{percent_incomplete} %')}\n")
                     )
             t_rpt.write(
                 ("\nPercentage of tasks that are overdue:\t\t"
-                f"{"N/a" if percent_overdue is None else (
-                f"{percent_overdue} %")}")
+                f"{'N/a' if percent_overdue is None else (
+                f'{percent_overdue} %')}")
                     )
 
 
@@ -626,7 +626,7 @@ def generate_user_overview():
     # Write totals section of overview report to output file
     with open("user_overview.txt", "w", encoding = "utf-8") as u_rpt:
         u_rpt.write("User overview:\t\t\t\t\t\t\t\t\t\t\t\tReport generated: "
-            f"{datetime.strftime(datetime.today(), "%Y-%m-%d %H:%M:%S")}\n")
+            f"{datetime.strftime(datetime.today(), '%Y-%m-%d %H:%M:%S')}\n")
         u_rpt.write(f"\nNumber of registered users:\t\t{len(user_data)}")
         u_rpt.write(f"\nTotal tasks in task list:\t\t{num_tasks}\n")
 
@@ -681,23 +681,23 @@ def generate_user_overview():
             u_rpt.write(f"\nTasks assigned:\t{num_user_tasks}")
             u_rpt.write(
                         ("\nPercentage of all tasks:\t\t\t\t\t"
-                        f"{"N/a" if percent_of_total is None else (
-                        f"{percent_of_total} %")}")
+                        f"{'N/a' if percent_of_total is None else (
+                        f'{percent_of_total} %')}")
                         )
             u_rpt.write(
                         ("\nPercentage of assigned tasks completed:\t\t"
-                        f"{"N/a" if u_percent_comp is None else (
-                        f"{u_percent_comp} %")}")
+                        f"{'N/a' if u_percent_comp is None else (
+                        f'{u_percent_comp} %')}")
                         )
             u_rpt.write(
                         ("\nPercentage of assigned tasks incomplete:\t"
-                        f"{"N/a" if u_percent_incomp is None else (
-                        f"{u_percent_incomp} %")}")
+                        f"{'N/a' if u_percent_incomp is None else (
+                        f'{u_percent_incomp} %')}")
                         )
             u_rpt.write(
                         ("\nPercentage of incomplete tasks overdue:\t\t"
-                        f"{"N/a" if u_percent_overdue is None else (
-                        f"{u_percent_overdue} %")}\n")
+                        f"{'N/a' if u_percent_overdue is None else (
+                        f'{u_percent_overdue} %')}\n")
                         )
 
 
