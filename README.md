@@ -1,35 +1,101 @@
-# The program:
+# 📂 Task Manager
 
-This is the second capstone project for the HyperionDev Software Engineering bootcamp.
-The program is a task manager that allows the user to:
+## About this project
 
-* register a new user
-* add a new task
-* view all tasks
-* view their personal assigned tasks
-* change the due date of an incomplete task assigned to them
-* change the user assigned to an incomplete task
+This is a task management program that allows the user to:
+
+* add new users and tasks
+* view all tasks or their own assigned tasks
+* edit the due date of a task and its assigned user 
 * mark a task as complete
-* generate two .txt reports showing statistics on users and tasks
+* generate .txt reports showing statistics about users and tasks
 
-# Capstone task requirements:
+## Installation
 
-The task involved taking a starting code framework and adding functionality such as:
+The program makes use of the Tabulate library, which can be installed from the command line using:
 
-* preventing duplication of registered users
-* displaying personal tasks with corresponding numbers
-* the option to mark a task as complete, changing the relevant task dictionary value to True
-* the option to edit the username assigned to an incomplete task
-* the option to change the due date of incomplete task
-* the ability to generate statistical .txt reports about tasks and users
+```
+pip install tabulate
+```
 
-It also required the code be made more modular through the use of functions and for possible
-errors to be handled.
 
-# Additional features:
+## Instructions for use
 
-Examples of additional changes, not required by the task:
+Please note, when first using the program, you will need to log in with the following default user details:
 
-* the option to toggle between detailed and summary displays of task lists
-* code to check that task due dates provided by the user must >= the current day or later
+username: **admin**\
+password: **password**
+
+On starting, the program creates the following .txt files if they don't already exist, and retrieves any data they contain:
+
+* user.txt - this stores each user's username and password on a separate line with the format **username;password**
+* tasks.txt - this stores data about each task on a separate line, with values separated by semicolons.
+
+### Main menu options:
+
+### Register a user
+
+* Enter a username between 5 and 15 characters
+    
+* Enter and confirm password between 8 and 20 characters
+
+* **Note:** The program does not allow duplicate usernames.
+
+### Add a task
+
+* Enter the name of the user to be assigned to the task. **Note:** only registered users can be assigned a task and the program provides a list of registered users if one is not entered on the first attempt.
+
+* Enter the title of the task and a task description
+
+* Enter a due date for the task.  **Note** this must be equal to or later than the current day.
+
+  Example:
+
+  ![alt text](example_add_task.png)
+
+
+### View all tasks
+
+* This option shows details of all the tasks assigned to all users.  It also displays the date on which the task was created and whether the task has been marked as complete.
+
+  Example (for the task added above):
+
+  ![alt text](example_display_all.png)
+
+* As shown above, there is also the option to toggle between a detailed and summary view (which shows each task on one line)
+
+### View my tasks
+
+* This option allows the current user to view and select one of their own assigned tasks. When selecting a task, the user is presented with the following options:
+
+  * mark the task as completed - **Note:** the user will be prompted to confirm this, as marking a task complete prevents further editing.
+
+  * change the due date (if the task is not marked as complete).  **Note:** the new date must be equal to or later than the current date
+
+  * change the assigned user (if the task is not marked as complete).  **Note:** the new user to be assigned must be registered, and a list of registered usernames is displayed.
+
+### Generate reports
+
+* This creates two .txt overview reports in the current directory if they do not already exist:
+
+* task_overview.txt - provides a summary of all tasks (see example below):
   
+  ![alt text](example_task_overview.png)
+
+* user_overview.txt - provides a summary of the status of tasks assigned to each user (see example below):
+
+  ![alt text](example_user_overview.png)
+
+## Potential improvements
+
+* the addition of a graphical user interface
+* the ability to sort and filter tasks by due date and completion status
+
+## Learning
+
+Through working on this project, I improved my knowledge of
+
+* making code more modular through use of functions
+* error handling
+* I/O operations - writing and reading from .txt files
+* handling time and date comparison
