@@ -51,7 +51,7 @@ On starting, the program creates the following .txt files if they don't already 
 
   Example:
 
-  ![alt text](example_add_task.png)
+  ![alt text](images/example_add_task.png)
 
 
 ### View all tasks
@@ -60,7 +60,7 @@ On starting, the program creates the following .txt files if they don't already 
 
   Example (for the task added above):
 
-  ![alt text](example_display_all.png)
+  ![alt text](images/example_display_all.png)
 
 * As shown above, there is also the option to toggle between a detailed and summary view (which shows each task on one line)
 
@@ -80,11 +80,11 @@ On starting, the program creates the following .txt files if they don't already 
 
 * task_overview.txt - provides a summary of all tasks (see example below):
   
-  ![alt text](example_task_overview.png)
+  ![alt text](images/example_task_overview.png)
 
 * user_overview.txt - provides a summary of the status of tasks assigned to each user (see example below):
 
-  ![alt text](example_user_overview.png)
+  ![alt text](images/example_user_overview.png)
 
 ## Potential improvements
 
