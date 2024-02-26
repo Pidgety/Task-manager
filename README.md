@@ -10,6 +10,26 @@ This is a task management program that allows the user to:
 * mark a task as complete
 * generate .txt reports showing statistics about users and tasks
 
+## Table of contents
+
+[Installation](https://github.com/Pidgety/Task-manager#installation)
+
+[Instructions for use](https://github.com/Pidgety/Task-manager#instructions-for-use)
+
+* [Register a user](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#register-a-user)
+
+* [Add a task](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#add-a-task)
+
+* [View all tasks](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#view-all-tasks)
+
+* [View my tasks](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#view-my-tasks)
+
+* [Generate reports](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#generate-reports)
+
+[Potential improvements](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#potential-improvements)
+
+[Learning](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#learning)
+
 ## Installation
 
 The program makes use of the Tabulate library, which can be installed from the command line using:
