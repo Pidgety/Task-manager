@@ -104,7 +104,7 @@ On starting, the program creates the following .txt files if they don't already 
 
 * user_overview.txt - provides a summary of the status of tasks assigned to each user (see example below):
 
-  <img src="images/example_user_overview.png" width="200"/>
+  <img src="images/example_user_overview.png" width="400"/>
 
 ## Potential improvements
 
