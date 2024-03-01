@@ -14,7 +14,9 @@ This is a task management program that allows the user to:
 
 [Installation](https://github.com/Pidgety/Task-manager#installation)
 
-[Instructions for use](https://github.com/Pidgety/Task-manager#instructions-for-use)
+[Technologies](https://github.com/Pidgety/Task-manager#technologies)
+
+[Setup](https://github.com/Pidgety/Task-manager#setup)
 
 * [Register a user](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#register-a-user)
 
@@ -30,14 +32,43 @@ This is a task management program that allows the user to:
 
 [Learning](https://github.com/Pidgety/Task-manager?tab=readme-ov-file#learning)
 
-## Installation
 
-The program makes use of the Tabulate library, which can be installed from the command line using:
+## Technologies
+
+This project was created using:
+
+* Python 3.12
+
+The project uses the Tabulate library,
+which can be installed from the command line:
 
 ```
 pip install tabulate
 ```
 
+For information on installing Python 3, please see the link below:
+
+https://www.python.org/downloads/
+
+
+## Setup
+
+To run this project, save the following file locally:
+
+* task_manager.py
+
+To run the script:
+
+* open the terminal or command-line interface
+* navigate into the folder containing the file
+* for Windows, enter the following command :
+```
+python task_manager.py
+```
+* for Mac/Linux:
+```
+python3 task_manager.py
+```
 
 ## Instructions for use
 
